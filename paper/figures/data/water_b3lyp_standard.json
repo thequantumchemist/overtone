@@ -1,0 +1,517 @@
+{
+  "X": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -18.210005318686736,
+      -10.671298329938033,
+      -16.093052762436727
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -10.666660997472576,
+      -41.12392986301612,
+      -159.4669182219115
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -16.09850482573699,
+      -159.45986225319027,
+      -46.70222276460724
+    ]
+  ],
+  "anharm_freq": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1566.8142224726823,
+    3618.0796495447057,
+    3709.384093625269
+  ],
+  "method": "standard",
+  "X_3": null,
+  "X_4": null,
+  "X_coriolis": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      26.553737866672485
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.002198714113941008
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      26.553737866672485,
+      0.002198714113941008,
+      0.0
+    ]
+  ],
+  "zeta": null,
+  "fermi_type1": null,
+  "fermi_type2": null,
+  "transitions": [
+    {
+      "quanta": {
+        "6": 1
+      },
+      "kind": "fundamental",
+      "label": "v7",
+      "harmonic": 1616.6164086562433,
+      "energy": 1566.8142224726823,
+      "intensity": 78.21967262752167,
+      "transition_dipole": [
+        -6.91645210404761e-16,
+        -6.325577153950148e-14,
+        0.029381359524701136
+      ],
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "6": 2
+      },
+      "kind": "overtone",
+      "label": "2v7",
+      "harmonic": 3233.2328173124865,
+      "energy": 3097.2084343079914,
+      "intensity": 1.5091014723838334,
+      "transition_dipole": [
+        2.581687795362543e-15,
+        1.8097098380403595e-13,
+        0.002902663205650624
+      ],
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "7": 1
+      },
+      "kind": "fundamental",
+      "label": "v8",
+      "harmonic": 3785.39429888043,
+      "energy": 3618.0773308784733,
+      "intensity": 4.26398170816831,
+      "transition_dipole": [
+        -2.593130372682587e-16,
+        3.3325360939702196e-14,
+        0.004514310083338098
+      ],
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "8": 1
+      },
+      "kind": "fundamental",
+      "label": "v9",
+      "harmonic": 3890.5677226939474,
+      "energy": 3709.3832916725587,
+      "intensity": 41.99498047214854,
+      "transition_dipole": [
+        2.9924126726077786e-16,
+        0.013991699819618663,
+        2.939016821098691e-14
+      ],
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "6": 3
+      },
+      "kind": "overtone",
+      "label": "3v7",
+      "harmonic": 4849.84922596873,
+      "energy": 4591.1826355059275,
+      "intensity": null,
+      "transition_dipole": null,
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "6": 1,
+        "7": 1
+      },
+      "kind": "combination",
+      "label": "v7+v8",
+      "harmonic": 5402.010707536673,
+      "energy": 5174.220255021217,
+      "intensity": 0.13096264868830618,
+      "transition_dipole": [
+        5.579579229277787e-15,
+        3.566426130686191e-14,
+        0.0006615671193838757
+      ],
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "6": 1,
+        "8": 1
+      },
+      "kind": "combination",
+      "label": "v7+v9",
+      "harmonic": 5507.184131350191,
+      "energy": 5260.104461382804,
+      "intensity": 4.191830506520929,
+      "transition_dipole": [
+        4.456102892311258e-15,
+        0.0037121653746364056,
+        -1.6921752400231075e-13
+      ],
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "6": 2,
+        "7": 1
+      },
+      "kind": "combination",
+      "label": "2v7+v8",
+      "harmonic": 7018.627116192916,
+      "energy": 6693.943168526588,
+      "intensity": null,
+      "transition_dipole": null,
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "6": 2,
+        "8": 1
+      },
+      "kind": "combination",
+      "label": "2v7+v9",
+      "harmonic": 7123.800540006434,
+      "energy": 6774.405620455676,
+      "intensity": null,
+      "transition_dipole": null,
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "7": 2
+      },
+      "kind": "overtone",
+      "label": "2v8",
+      "harmonic": 7570.78859776086,
+      "energy": 7153.906802030914,
+      "intensity": 0.7030563587425969,
+      "transition_dipole": [
+        3.305459207675172e-16,
+        1.2762056719118984e-13,
+        0.0013036051702918895
+      ],
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "7": 1,
+        "8": 1
+      },
+      "kind": "combination",
+      "label": "v8+v9",
+      "harmonic": 7675.962021574378,
+      "energy": 7167.99370432912,
+      "intensity": 3.4824885491641817,
+      "transition_dipole": [
+        4.154732578028216e-15,
+        0.002898469161144763,
+        -1.1638032387421195e-13
+      ],
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "8": 2
+      },
+      "kind": "overtone",
+      "label": "2v9",
+      "harmonic": 7781.135445387895,
+      "energy": 7325.362137815903,
+      "intensity": 0.02547213349121732,
+      "transition_dipole": [
+        3.008970831150072e-15,
+        1.8315531042210008e-13,
+        0.0002452114550345337
+      ],
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "6": 1,
+        "7": 2
+      },
+      "kind": "combination",
+      "label": "v7+2v8",
+      "harmonic": 9187.405006417104,
+      "energy": 8699.37842784372,
+      "intensity": null,
+      "transition_dipole": null,
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "6": 1,
+        "7": 1,
+        "8": 1
+      },
+      "kind": "combination",
+      "label": "v7+v8+v9",
+      "harmonic": 9292.57843023062,
+      "energy": 8708.043575709427,
+      "intensity": null,
+      "transition_dipole": null,
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "6": 1,
+        "8": 2
+      },
+      "kind": "combination",
+      "label": "v7+2v9",
+      "harmonic": 9397.751854044138,
+      "energy": 8859.990254763712,
+      "intensity": null,
+      "transition_dipole": null,
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "7": 2,
+        "8": 1
+      },
+      "kind": "combination",
+      "label": "2v8+v9",
+      "harmonic": 11461.356320454808,
+      "energy": 10544.35625725965,
+      "intensity": null,
+      "transition_dipole": null,
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "7": 3
+      },
+      "kind": "overtone",
+      "label": "3v8",
+      "harmonic": 11356.18289664129,
+      "energy": 10607.488413457322,
+      "intensity": null,
+      "transition_dipole": null,
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "7": 1,
+        "8": 2
+      },
+      "kind": "combination",
+      "label": "v8+2v9",
+      "harmonic": 11566.529744268326,
+      "energy": 10624.505632250553,
+      "intensity": null,
+      "transition_dipole": null,
+      "resonance_affected": false,
+      "mixing": null
+    },
+    {
+      "quanta": {
+        "8": 3
+      },
+      "kind": "overtone",
+      "label": "3v9",
+      "harmonic": 11671.703168081842,
+      "energy": 10847.936538430033,
+      "intensity": null,
+      "transition_dipole": null,
+      "resonance_affected": false,
+      "mixing": null
+    }
+  ]
+}

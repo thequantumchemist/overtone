@@ -68,7 +68,8 @@ def main():
         calculate_anharmonics(atoms, setup, out, derivative_source=source, dry_run=True)
         return
 
-    atoms = common.optimise(atoms, setup_harm, logfile=str(HERE / "opt.log"))
+    atoms = common.optimise(atoms, setup_harm, logfile=str(HERE / "opt.log"),
+                            save=out / "optimised.traj")
     with contextlib.redirect_stdout(io.StringIO()):
         res = calculate_anharmonics(
             atoms, setup, out, setup_harmonic_calculator=setup_harm,

@@ -25,7 +25,7 @@ FUNCTIONS = [
     overtone.VPT2Solver, overtone.TransitionCalculator, overtone.CoordinateTransformer,
     spectrum.plot_spectrum, spectrum.broaden_transitions, spectrum.broaden,
     spectrum.lorentzian, spectrum.gaussian, transitions.term_value,
-    transitions.enumerate_states, is_linear_molecule,
+    transitions.enumerate_states, is_linear_molecule, SerialEngine,
 ]
 MODELS = [overtone.HarmonicsResult, overtone.AnharmonicDerivativesConfig,
           overtone.AnharmonicDerivativesResult, overtone.DipoleDerivativesResult,

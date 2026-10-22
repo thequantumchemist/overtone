@@ -78,14 +78,30 @@ def engine(use_shephex):
     ))
 
 
-def optimise(atoms, setup, fmax=1e-4, constraint=None, logfile="opt.log"):
-    """Tight geometry optimisation (VPT2 needs an accurate minimum)."""
+def optimise(atoms, setup, fmax=1e-4, constraint=None, logfile="opt.log", save=None):
+    """
+    Tight geometry optimisation (VPT2 needs an accurate minimum).
+
+    save : path of a file for the optimised structure. If it exists, the
+        structure is read instead of optimised again. This makes restarts
+        exact: the displaced structures of a restarted run then match the
+        saved single points to the last digit.
+    """
+    from ase.io import read, write
+
+    if save is not None and Path(save).exists():
+        print(f"Restart: using the optimised structure in {save}")
+        return read(save)
     atoms = atoms.copy()
     if constraint is not None:
         atoms.set_constraint(constraint)
     atoms.calc = setup()
     BFGS(atoms, logfile=logfile).run(fmax=fmax, steps=500)
     atoms.set_constraint()
+    if save is not None:
+        Path(save).parent.mkdir(parents=True, exist_ok=True)
+        clean = atoms.copy()
+        write(save, clean)
     return atoms
 
 

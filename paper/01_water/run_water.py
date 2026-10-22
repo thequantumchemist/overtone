@@ -83,7 +83,8 @@ def main():
         calculate_anharmonics(atoms, setup, out, derivative_source="forces", dry_run=True)
         return
 
-    atoms = common.optimise(atoms, setup, logfile=str(HERE / "opt.log"))
+    atoms = common.optimise(atoms, setup, logfile=str(HERE / "opt.log"),
+                            save=out / "optimised.traj")
     with contextlib.redirect_stdout(io.StringIO()):
         res = calculate_anharmonics(
             atoms, setup, out, engine=common.engine(args.shephex),

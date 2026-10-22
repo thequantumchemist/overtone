@@ -122,9 +122,11 @@ def main():
 
     opt_log = base / "opt.traj"
     from ase.optimize import BFGS
-    a = atoms.copy()
-    a.calc = exact()
-    BFGS(a, logfile=str(base / "opt.log"), trajectory=str(opt_log)).run(fmax=1e-4)
+    if not (base / "opt.done").exists():  # restart: keep a finished optimisation
+        a = atoms.copy()
+        a.calc = exact()
+        BFGS(a, logfile=str(base / "opt.log"), trajectory=str(opt_log)).run(fmax=1e-4)
+        (base / "opt.done").touch()
     opt_traj = read(opt_log, ":")
     atoms = opt_traj[-1]
 

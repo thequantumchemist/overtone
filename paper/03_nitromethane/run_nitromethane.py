@@ -86,7 +86,8 @@ def run(name, args):
                               exclude_below=100, dry_run=True)
         return
     fix = FixInternals(dihedrals_deg=[[DIHEDRAL[name], [H_PLANE, C, N, O]]])
-    atoms = common.optimise(atoms, setup, constraint=fix, logfile=str(HERE / f"opt_{name}.log"))
+    atoms = common.optimise(atoms, setup, constraint=fix, logfile=str(HERE / f"opt_{name}.log"),
+                            save=out / "optimised.traj")
 
     with contextlib.redirect_stdout(io.StringIO()):
         res = calculate_anharmonics(

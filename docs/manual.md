@@ -716,12 +716,26 @@ Engines decide how the single points are run. They are passed to
 
 ```python
 from overtone.engines import SerialEngine
-SerialEngine()
+SerialEngine(restart=True, position_tolerance=1e-08)
 ```
 
-Runs all single points one after another in the current process. After each
-structure, the results are frozen, so a calculator shared between structures
-(such as an on-the-fly learning model) is called exactly once per structure.
+Runs all single points one after another in the current process. This is
+the default engine of `calculate_anharmonics`.
+
+| Parameter | Default | Controls |
+|--------------------------------------|-----------|---------------------------------------------|
+| `restart` | `True` | Write every finished structure immediately to `calculations/job_<index>.traj` in the output directory, and reuse finished structures of an earlier run. |
+| `position_tolerance` | `1e-08` | Largest position difference (Å) for which a saved structure counts as the same structure. |
+
+An interrupted run is restarted by simply starting it again with the same
+directory. Only the missing structures are calculated. A saved structure is
+reused only if the atoms and positions match and all requested properties
+(e.g. forces or dipoles) are present. Progress is printed to stderr, one line
+per calculated structure, so it also appears in cluster log files.
+
+After each structure, the results are frozen. A calculator shared between
+structures (such as an on-the-fly learning model) is therefore called exactly
+once per structure.
 
 ### `ShephexEngine`
 
@@ -750,7 +764,7 @@ calculate_trajectory(trajectory, setup_calculator, properties=("energy",), ...)
 | `setup_calculator` | required | Function that returns a calculator. |
 | `properties` | `("energy",)` | ASE properties to evaluate, e.g. `"forces"` or `"dipole"`. |
 | `trajectory_path` | `None` | `ShephexEngine` only. File for the input structures. |
-| `output_directory` | `None` | `ShephexEngine` only. Directory for the individual calculations. |
+| `output_directory` | `None` | Directory for the individual calculations. The `SerialEngine` stores finished structures there for restarts. |
 | `overwrite` | `False` | `ShephexEngine` only. Recalculate finished single points. |
 
 A custom engine can be written by deriving from
@@ -773,6 +787,10 @@ With `save_results=True`, `calculate_anharmonics` writes
 | `anharmonics/vpt2_config.json` | `VPT2Config` |
 | `anharmonics/vpt2_result.json` | `VPT2Result` |
 
+Independent of `save_results`, the `SerialEngine` stores every finished single
+point in `harmonics/calculations/` and `anharmonics/calculations/` as
+`job_<index>.traj`. These files make interrupted runs restartable.
+
 All JSON files can be read back with the `load` method of the matching class.
 
 ---
@@ -782,6 +800,12 @@ All JSON files can be read back with the `load` method of the matching class.
 **Converge tightly.** Optimise the structure to fmax ≈ 10⁻⁴ eV/Å or lower.
 Converge every single point tightly, for example with ORCA `VeryTightSCF`
 or tblite `accuracy=0.01`. Use a fine integration grid for DFT.
+
+**Restarting an interrupted run.** Start the same script again with the same
+directory. Finished single points are reused, and only the missing ones are
+calculated. If you optimise the structure in your script, save the optimised
+structure and read it on a restart. A re-optimised structure can differ in the
+last digits, and then no saved single point would match.
 
 **Use forces where possible.** `derivative_source="forces"` needs far fewer
 single points. Check the cost first with `dry_run=True`.
