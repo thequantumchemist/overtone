@@ -71,8 +71,10 @@ def main():
         out = HERE / "results_test"
     else:
         # VeryTightSCF: finite differences amplify SCF noise (see SI).
-        # Density relaxed: dipoles from the relaxed MP2 density, not from HF.
-        # Check in one output that the printed dipole is the relaxed MP2 one.
+        # Density relaxed: ORCA then prints the dipole of the unrelaxed and
+        # afterwards of the relaxed MP2 density. ASE reads the last block,
+        # i.e. the relaxed MP2 dipole (checked with ORCA 5.0.4: 1.865 D for
+        # water). Without this block ASE would read a non-relaxed dipole.
         setup = common.orca("EnGrad MP2 aug-cc-pVTZ VeryTightSCF",
                             blocks="%mp2 Density relaxed end",
                             nprocs=args.nprocs, command=common.ORCA5, label="water")

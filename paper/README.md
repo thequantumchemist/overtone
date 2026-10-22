@@ -8,6 +8,7 @@
 | `04_h2_adapt_vqe` | H2, CCSD and ADAPT-VQE/STO-3G | small | exact (CCSD = FCI for H2) |
 | `05_active_learning` | H2O MP2, CH4 B3LYP/cc-pVDZ with FALCON | see SI | exact reference runs |
 | `06_numerics` | model force field, GFN2-xTB | small | noise and step analysis (SI) |
+| `07_hybrid` | H2O, B3LYP/def2-TZVP (PySCF), hybrid with GFN2-xTB | 200 + 19 B3LYP | full B3LYP, MP2 (01_water), experiment |
 | `figures` | workflow and result figures | none | `python workflow_figure.py`, `python results_figures.py` |
 
 Every script has `--test` (GFN2-xTB instead of ORCA, runs in minutes),
@@ -22,3 +23,6 @@ Run everything with `bash run_all.sh` (one job each) or submit the jobs with
 The water figure (`figures/results_figures.py`) currently uses preliminary
 B3LYP/def2-TZVP test data in `figures/data`. Replace them with the MP2 result
 of `01_water` (save it with `VPT2Result.dump`) before the final version.
+
+`RESULTS.md` collects the values of finished production runs until they are
+inserted into the manuscript.

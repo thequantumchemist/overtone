@@ -14,6 +14,7 @@ paths of the original calculations as defaults.
 import argparse
 import csv
 import os
+import re
 import warnings
 from pathlib import Path
 
@@ -96,6 +97,8 @@ def optimise(atoms, setup, fmax=1e-4, constraint=None, logfile="opt.log", save=N
     if constraint is not None:
         atoms.set_constraint(constraint)
     atoms.calc = setup()
+    if logfile not in (None, "-"):
+        Path(logfile).parent.mkdir(parents=True, exist_ok=True)
     BFGS(atoms, logfile=logfile).run(fmax=fmax, steps=500)
     atoms.set_constraint()
     if save is not None:
@@ -176,10 +179,30 @@ def hitran_band_intensities(par_file, isotopologue=1, abundance=0.997317):
         for line in f:
             if len(line) < 100 or int(line[2]) != isotopologue:
                 continue
-            upper = tuple(int(x) for x in line[67:82].split()[-3:])
-            lower = tuple(int(x) for x in line[82:97].split()[-3:])
-            if lower != (0, 0, 0):
+            # vibrational labels, e.g. "0 1 0". Unassigned states are marked
+            # with -2 (e.g. "-2 1-2"); they carry a negligible intensity and
+            # are skipped.
+            upper = tuple(int(x) for x in re.findall(r"-?\d+", line[67:82])[-3:])
+            lower = tuple(int(x) for x in re.findall(r"-?\d+", line[82:97])[-3:])
+            if len(upper) != 3 or min(upper) < 0 or lower != (0, 0, 0):
                 continue
             S = float(line[15:25])  # cm/molecule at 296 K, abundance-scaled
             bands[upper] = bands.get(upper, 0.0) + S
     return {k: v / abundance * N_A * 1e-5 for k, v in bands.items()}
+
+
+def quanta_of(label, modes):
+    """'v1+v3' or '2v2' -> {mode index: quanta}, with modes = {'v1': index, ...}."""
+    q = {}
+    for part in label.split("+"):
+        n = int(part[0]) if part[0].isdigit() else 1
+        name = part[1:] if part[0].isdigit() else part
+        q[modes[name]] = q.get(modes[name], 0) + n
+    return q
+
+
+def water_modes(result):
+    """Water mode labels by harmonic frequency: bend < sym. stretch < antisym. stretch."""
+    f = fundamentals(result)
+    order = sorted(f, key=lambda m: f[m].harmonic)
+    return {"v2": order[0], "v1": order[1], "v3": order[2]}

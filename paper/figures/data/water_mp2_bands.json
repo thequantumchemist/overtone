@@ -1,0 +1,95 @@
+[
+ {
+  "quanta": {
+   "6": 1
+  },
+  "kind": "fundamental",
+  "label": "v7",
+  "harmonic": 1628.0745317604176,
+  "energy": 1577.8005054453356,
+  "intensity": 69.46337698310617
+ },
+ {
+  "quanta": {
+   "6": 2
+  },
+  "kind": "overtone",
+  "label": "2v7",
+  "harmonic": 3256.149063520835,
+  "energy": 3123.9050164040573,
+  "intensity": 0.6024533197008427
+ },
+ {
+  "quanta": {
+   "7": 1
+  },
+  "kind": "fundamental",
+  "label": "v8",
+  "harmonic": 3821.689653550911,
+  "energy": 3654.2629773610306,
+  "intensity": 5.316262537915903
+ },
+ {
+  "quanta": {
+   "8": 1
+  },
+  "kind": "fundamental",
+  "label": "v9",
+  "harmonic": 3947.448758022422,
+  "energy": 3767.7509377053802,
+  "intensity": 72.05791784214765
+ },
+ {
+  "quanta": {
+   "6": 1,
+   "7": 1
+  },
+  "kind": "combination",
+  "label": "v7+v8",
+  "harmonic": 5449.764185311328,
+  "energy": 5215.091323852939,
+  "intensity": 0.06860434449521077
+ },
+ {
+  "quanta": {
+   "6": 1,
+   "8": 1
+  },
+  "kind": "combination",
+  "label": "v7+v9",
+  "harmonic": 5575.52328978284,
+  "energy": 5325.367538447207,
+  "intensity": 3.9923540085066986
+ },
+ {
+  "quanta": {
+   "7": 2
+  },
+  "kind": "overtone",
+  "label": "2v8",
+  "harmonic": 7643.379307101822,
+  "energy": 7226.977275351451,
+  "intensity": 0.3231464210093935
+ },
+ {
+  "quanta": {
+   "7": 1,
+   "8": 1
+  },
+  "kind": "combination",
+  "label": "v8+v9",
+  "harmonic": 7769.138411573333,
+  "energy": 7267.2300803813,
+  "intensity": 2.2598581881991935
+ },
+ {
+  "quanta": {
+   "8": 2
+  },
+  "kind": "overtone",
+  "label": "2v9",
+  "harmonic": 7894.897516044844,
+  "energy": 7443.287924788029,
+  "intensity": 0.017073931178077782
+ }
+]

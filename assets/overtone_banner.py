@@ -1,8 +1,14 @@
 """
-OVERTONE software banner (README, slides).
+OVERTONE software banner (README, slides) and table-of-contents graphic.
 
-    python overtone_banner.py   ->  overtone_banner.png (1536 x 1024), overtone_banner.pdf
+    python overtone_banner.py         ->  overtone_banner.png (1536 x 1024), .pdf
+    python overtone_banner.py --toc   ->  overtone_toc.png / .pdf (3.25 x 1.75 in, JCTC)
+
+The TOC version uses the same design with a larger tagline, no feature line
+and no equations at the cropped edges, so that all text stays legible at the
+small TOC size.
 """
+import sys
 from pathlib import Path
 
 import matplotlib.patheffects as pe
@@ -12,6 +18,7 @@ from matplotlib.collections import LineCollection
 from matplotlib.colors import LinearSegmentedColormap, to_rgb
 
 HERE = Path(__file__).parent
+TOC = "--toc" in sys.argv
 plt.rcParams.update({"font.family": "DejaVu Sans", "mathtext.fontset": "dejavusans"})
 rng = np.random.default_rng(7)
 
@@ -51,6 +58,8 @@ eqs = [
 ]
 pos = [(0.62, 0.90), (0.98, 0.78), (0.04, 0.05), (1.12, 0.27), (0.05, 0.93), (0.98, 0.04)]
 for e, (x, y) in zip(eqs, pos):
+    if TOC and not 0.15 < y < 0.82:
+        continue  # cut off by the TOC crop
     ax.text(x, y, e, color="#9ecbff", alpha=0.12, fontsize=13, zorder=1)
 
 # finite-difference stencil grid (faint)
@@ -79,7 +88,7 @@ lc.set_array(x)
 ax.add_collection(lc)
 for n, (p, h) in enumerate(peaks, start=1):
     label = r"$\nu$" if n == 1 else rf"${n}\nu$"
-    ax.text(p, 0.135 + h + 0.025, label, color="white", alpha=0.75, fontsize=13,
+    ax.text(p, 0.135 + h + 0.025, label, color="white", alpha=0.75, fontsize=20 if TOC else 13,
             ha="center", zorder=4,
             path_effects=[pe.withStroke(linewidth=3, foreground="#06122b", alpha=0.6)])
 
@@ -137,12 +146,28 @@ title.set_path_effects([pe.withStroke(linewidth=22, foreground="#7c4dff", alpha=
                         pe.withStroke(linewidth=7, foreground="#00e5ff", alpha=0.12),
                         pe.withStroke(linewidth=3, foreground="#e1f5fe", alpha=0.25),
                         pe.Normal()])
-ax.text(0.735, 0.548, "Anharmonic vibrational spectra",
-        color="#cfe8ff", fontsize=15, va="center", zorder=8)
-ax.text(0.735, 0.508, "from quantum chemistry and machine learning",
-        color="#cfe8ff", fontsize=15, va="center", zorder=8)
-ax.text(0.735, 0.452, "VPT2  \u00b7  GVPT2  \u00b7  overtones  \u00b7  combinations  \u00b7  IR / NIR intensities",
-        color="#8fb8e6", fontsize=11.5, va="center", zorder=8)
+if TOC:
+    for i, line in enumerate(["Anharmonic vibrational spectra", "from quantum chemistry",
+                              "and machine learning"]):
+        ax.text(0.735, 0.528 - 0.056 * i, line, color="#cfe8ff", fontsize=22,
+                va="center", zorder=8)
+else:
+    ax.text(0.735, 0.548, "Anharmonic vibrational spectra",
+            color="#cfe8ff", fontsize=15, va="center", zorder=8)
+    ax.text(0.735, 0.508, "from quantum chemistry and machine learning",
+            color="#cfe8ff", fontsize=15, va="center", zorder=8)
+    ax.text(0.735, 0.452, "VPT2  \u00b7  GVPT2  \u00b7  overtones  \u00b7  combinations  \u00b7  IR / NIR intensities",
+            color="#8fb8e6", fontsize=11.5, va="center", zorder=8)
+
+if TOC:
+    from matplotlib.transforms import Bbox
+    # 3.25 x 1.75 in aspect ratio: full width (12 in), height 12 / (3.25 / 1.75) in
+    h = W * 1.75 / 3.25
+    box = Bbox([[0, 0.45], [W, 0.45 + h]])
+    fig.savefig(HERE / "overtone_toc.pdf", bbox_inches=box)
+    fig.savefig(HERE / "overtone_toc.png", bbox_inches=box, dpi=2 * 300 * 3.25 / W)
+    print("written overtone_toc.png and overtone_toc.pdf")
+    sys.exit()
 
 fig.savefig(HERE / "overtone_banner.png", dpi=DPI)
 fig.savefig(HERE / "overtone_banner.pdf")
