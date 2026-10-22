@@ -1,0 +1,56 @@
+[
+ {
+  "label": "v7",
+  "kind": "fundamental",
+  "energy": 1566.8142223752902,
+  "intensity": 78.2196726226596
+ },
+ {
+  "label": "2v7",
+  "kind": "overtone",
+  "energy": 3097.208434113207,
+  "intensity": 1.5091014722889255
+ },
+ {
+  "label": "v8",
+  "kind": "fundamental",
+  "energy": 3618.077330878465,
+  "intensity": 4.263981708168299
+ },
+ {
+  "label": "v9",
+  "kind": "fundamental",
+  "energy": 3709.383291575158,
+  "intensity": 41.99498047104584
+ },
+ {
+  "label": "v7+v8",
+  "kind": "combination",
+  "energy": 5174.220254923817,
+  "intensity": 0.13096264868584095
+ },
+ {
+  "label": "v7+v9",
+  "kind": "combination",
+  "energy": 5260.104460993227,
+  "intensity": 4.19183050621047
+ },
+ {
+  "label": "2v8",
+  "kind": "overtone",
+  "energy": 7153.906802030898,
+  "intensity": 0.7030563587425953
+ },
+ {
+  "label": "v8+v9",
+  "kind": "combination",
+  "energy": 7167.993704231696,
+  "intensity": 3.4824885491168494
+ },
+ {
+  "label": "2v9",
+  "kind": "overtone",
+  "energy": 7325.362137621102,
+  "intensity": 0.025472133490539946
+ }
+]

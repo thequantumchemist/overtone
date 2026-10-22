@@ -1,0 +1,15 @@
+# Package metadata lives in setup.py; this file only selects the build backend
+# and configures the development tools.
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = [
+    # NumPy 2.5 deprecation raised inside ASE itself, not in OVERTONE
+    "ignore:Setting the shape on a NumPy array:DeprecationWarning",
+]
+
+[tool.ruff]
+line-length = 88
