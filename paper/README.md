@@ -9,6 +9,8 @@
 | `05_active_learning` | H2O MP2, CH4 B3LYP/cc-pVDZ with FALCON | see SI | exact reference runs |
 | `06_numerics` | model force field, GFN2-xTB | small | noise and step analysis (SI) |
 | `07_hybrid` | H2O, B3LYP/def2-TZVP (PySCF), hybrid with GFN2-xTB | 200 + 19 B3LYP | full B3LYP, MP2 (01_water), experiment |
+| `07_hybrid` | H2O, B3LYP/def2-TZVP Hessian + GFN2-xTB force field | 19 B3LYP + 181 GFN2-xTB | full B3LYP, MP2, experiment |
+| `08_convergence` | H2O and H2CO, MP2/aug-cc-pVTZ, stencil x coupling x step | 1,744 (H2O) + 7,264 (H2CO) | production setting (SI) |
 | `figures` | workflow and result figures | none | `python workflow_figure.py`, `python results_figures.py` |
 
 Every script has `--test` (GFN2-xTB instead of ORCA, runs in minutes),
@@ -20,9 +22,15 @@ the environment variables `ORCA_COMMAND` (ORCA 5.0.4) and `ORCA6_COMMAND`
 Run everything with `bash run_all.sh` (one job each) or submit the jobs with
 `sbatch submit.slurm <folder> <script> [arguments]`.
 
-The water figure (`figures/results_figures.py`) currently uses preliminary
-B3LYP/def2-TZVP test data in `figures/data`. Replace them with the MP2 result
-of `01_water` (save it with `VPT2Result.dump`) before the final version.
+## Figures
 
-`RESULTS.md` collects the values of finished production runs until they are
-inserted into the manuscript.
+| Figure | Script | Data |
+|---|---|---|
+| Fig. 1, workflow | `figures/workflow_figure.py` | `figures/water_b3lyp_bands.json` (inset spectrum, B3LYP/def2-TZVP) |
+| Water spectrum | `figures/results_figures.py` | `figures/data/water_mp2_bands.json` (01_water), `figures/data/water_hitran_bands.json` |
+| Formaldehyde, GVPT2 | `figures/results_figures.py` | `figures/data/formaldehyde_gfn2_*.json` (tutorial 4) |
+| TOC graphic | `../assets/overtone_banner.py --toc` | none |
+| README banner | `../assets/overtone_banner.py` | none |
+
+Run the scripts inside their folders, e.g. `cd figures && python results_figures.py`.
+To update a figure after a new calculation, replace its data file and run the script again.

@@ -26,8 +26,8 @@ from overtone import calculate_anharmonics, recompute_vpt2  # noqa: E402
 
 HERE = Path(__file__).parent
 
-# MP2/aug-cc-pVTZ VPT2 values of Barone, J. Chem. Phys. 122, 014108 (2005).
-# TODO: check these numbers against the table in the paper before submission.
+# MP2/aug-cc-pVTZ VPT2 values of Barone, J. Chem. Phys. 122, 014108 (2005),
+# Tables IV and V (frozen core). Checked against the paper.
 BARONE_2005 = {
     "v2": {"harmonic": 1628.0, "anharmonic": 1578.0},
     "v1": {"harmonic": 3822.0, "anharmonic": 3653.0},

@@ -42,7 +42,9 @@ CORNATON = {
     },
 }
 EXPERIMENT = [3080, 3045, 2974, 1583, 1434, 1410, 1397, 1380, 1131, 1096, 918, 657, 603, 475]
-# weak bands assigned in the experimental gas-phase spectrum (Cornaton, Sec. 4.2.2)
+# Combination and overtone bands CALCULATED by Cornaton et al. (GVPT2, Sec. 4.2.2).
+# They are not experimental values: Cornaton et al. relate them qualitatively
+# to weak features of the experimental gas-phase spectrum.
 COMBINATIONS = {"v4+v7": 2955, "v4+v8": 2933, "v4+v11": 2471, "2v7": 2768}
 
 C, N, H_PLANE, O = 0, 1, 2, 5  # atom indices in ase.build.molecule("CH3NO2")
@@ -120,7 +122,7 @@ def run(name, args):
     combos = []
     for label, nu_exp in COMBINATIONS.items():
         t = common.band(res, quanta_of(label, modes))
-        combos.append({"band": label, "GVPT2": round(t.energy, 1), "exp": nu_exp,
+        combos.append({"band": label, "GVPT2": round(t.energy, 1), "Cornaton GVPT2": nu_exp,
                        "intensity": None if t.intensity is None else round(t.intensity, 3)})
     common.write_csv(combos, out / f"nitromethane_{name}_combinations.csv")
     for r in rows + combos:

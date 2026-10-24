@@ -10,4 +10,7 @@ cd "$(dirname "$0")"
 (cd 03_nitromethane && python run_nitromethane.py)
 (cd 05_active_learning && python run_falcon.py --system water)
 (cd 05_active_learning && python run_falcon.py --system methane)
+(cd 07_hybrid && python run_hybrid.py)
+(cd 08_convergence && python run_convergence.py --molecule water)
+(cd 08_convergence && python run_convergence.py --molecule formaldehyde)
 (cd 02_ethylene && python run_ethylene.py)               # the expensive one

@@ -8,7 +8,8 @@ Numerical analysis behind the default settings (Supporting Information).
    function of the anharmonic step.
 
 Runs locally in a few minutes (no quantum chemistry program needed).
-    python run_numerics.py
+    python run_numerics.py                 # all three parts
+    python run_numerics.py noise           # only the noise analysis
 """
 
 import contextlib
@@ -28,6 +29,7 @@ warnings.filterwarnings("ignore")
 
 import common  # noqa: E402
 from overtone import CoordinateTransformer, calculate_anharmonics, estimate_cost  # noqa: E402
+from overtone.engines import SerialEngine  # noqa: E402
 from test_harmonics_and_pipeline import (  # noqa: E402
     QFFCalculator, _harmonics, _model_force_field, _optimised)
 
@@ -72,8 +74,11 @@ def noise():
                 rng = np.random.default_rng(seed)
                 setup = lambda: Noisy(atoms.positions.copy(), tr, w, T, U, act,
                                       sigma=sigma_eh * HARTREE, rng=rng)
+                # restart=False: every noise sample must be calculated afresh.
+                # With restart, all samples would reuse the energies of the first.
                 with contextlib.redirect_stdout(io.StringIO()):
-                    r = calculate_anharmonics(atoms.copy(), setup, OUT / "tmp", stencil=1,
+                    r = calculate_anharmonics(atoms.copy(), setup, OUT / "tmp_noise",
+                                              engine=SerialEngine(restart=False), stencil=1,
                                               coriolis=False, harmonic_delta=0.001,
                                               anharmonic_delta=delta, method="standard")
                 vals.append(r.anharm_freq[act])
@@ -91,7 +96,8 @@ def truncation():
         res = {}
         for delta in (0.05, 0.1, 0.2, 0.3, 0.5):
             with contextlib.redirect_stdout(io.StringIO()):
-                res[delta] = calculate_anharmonics(atoms.copy(), setup, OUT / "tmp",
+                res[delta] = calculate_anharmonics(atoms.copy(), setup,
+                                                   OUT / f"tmp_{name}_{delta}",
                                                    derivative_source="forces",
                                                    anharmonic_delta=delta,
                                                    method="standard").anharm_freq[6:]
@@ -106,7 +112,12 @@ def truncation():
 
 
 if __name__ == "__main__":
+    import argparse
+    p = argparse.ArgumentParser(description="Numerical analysis for the SI")
+    p.add_argument("parts", nargs="*", default=["costs", "noise", "truncation"],
+                   choices=["costs", "noise", "truncation"],
+                   help="parts to run (default: all)")
+    args = p.parse_args()
     OUT.mkdir(exist_ok=True)
-    costs()
-    noise()
-    truncation()
+    for part in args.parts:
+        {"costs": costs, "noise": noise, "truncation": truncation}[part]()
