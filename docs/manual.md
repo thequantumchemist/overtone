@@ -34,7 +34,7 @@ a user can call, with all parameters, what they control and their defaults.
 
 ### Requirements
 
-- Python 3.10 or later
+- Python 3.11 or later
 - [NumPy](https://numpy.org) and [SciPy](https://scipy.org)
 - [ASE](https://docs.ase-lib.org) 3.23 or later
 - [pydantic](https://docs.pydantic.dev) 2.0 or later

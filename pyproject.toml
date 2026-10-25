@@ -1,8 +1,54 @@
-# Package metadata lives in setup.py; this file only selects the build backend
-# and configures the development tools.
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.13.5,<0.14"]
+build-backend = "uv_build"
+
+[project]
+name = "overtone"
+version = "0.1.0"
+description = "Anharmonic vibrational spectra (fundamentals, overtones, combination bands, IR/NIR intensities) with VPT2 for any ASE calculator"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "GPL-3.0-only"  # SPDX identifier; use "GPL-3.0-or-later" to allow later versions
+license-files = ["LICENSE"]
+authors = [
+    { name = "Basila Bhanu Pattani Ameerjan" },
+    { name = "Mads-Peter Verner Christiansen" },
+    { name = "Wilke Dononelli", email = "wido@uni-bremen.de" },
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "numpy",
+    "scipy",
+    "ase>=3.23",
+    "pydantic>=2.0",
+    "rich",
+    "matplotlib",  # spectrum plotting is part of the core package
+]
+
+[project.optional-dependencies]
+plot = []  # kept for compatibility; matplotlib is now core
+cluster = ["shephex"]  # multi-node / queueing system runs
+falcon = ["falcon-md"]  # on-the-fly active learning
+tutorial = ["tblite"]
+test = ["pytest", "tblite"]
+
+[project.urls]
+Homepage = "https://github.com/thequantumchemist/overtone"
+Repository = "https://github.com/thequantumchemist/overtone"
+
+[tool.uv.build-backend]
+# Ship the test suite in the sdist, as MANIFEST.in did
+source-include = ["tests/**"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -3,6 +3,8 @@ OVERTONE: anharmonic vibrational spectra with second-order vibrational
 perturbation theory (VPT2) for any ASE calculator.
 """
 
+import importlib.metadata
+
 from overtone.anharmonics.coordinate_transforms import CoordinateTransformer
 from overtone.anharmonics.derivatives_config import AnharmonicDerivativesConfig
 from overtone.anharmonics.derivatives_result import AnharmonicDerivativesResult
@@ -19,7 +21,7 @@ from overtone.harmonics import Harmonics, HarmonicsResult
 from overtone.spectrum import broaden_transitions, plot_spectrum
 from overtone.workflow import calculate_anharmonics, estimate_cost, recompute_vpt2
 
-__version__ = "0.1.0"
+__version__ = importlib.metadata.version("overtone")
 
 __all__ = [
     "calculate_anharmonics",
