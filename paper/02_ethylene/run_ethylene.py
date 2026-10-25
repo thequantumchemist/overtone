@@ -21,6 +21,10 @@ from ase.build import molecule
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import common  # noqa: E402
 
+if getattr(common, "COMMON_VERSION", 0) < 3:
+    raise SystemExit("paper/common.py is outdated. Copy common.py from the same "
+                     "release as this script.")
+
 from overtone import calculate_anharmonics, recompute_vpt2  # noqa: E402
 
 HERE = Path(__file__).parent

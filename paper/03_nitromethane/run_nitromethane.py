@@ -1,11 +1,11 @@
 """
-Nitromethane, B3LYP/cc-pVTZ, staggered and eclipsed conformers, against
+Nitromethane, B3LYP/cc-pVTZ, staggered conformer, against
 Cornaton, Ringholm, Louant and Ruud, Phys. Chem. Chem. Phys. 18, 4201 (2016).
 Fundamentals, harmonic and anharmonic IR intensities, overtones and
 combination bands. As in that work, the nearly free methyl torsion is
 excluded from the anharmonic treatment (14 instead of 15 modes).
 
-    python run_nitromethane.py              # ORCA, both conformers
+    python run_nitromethane.py              # ORCA, staggered conformer
     python run_nitromethane.py --test       # GFN2-xTB stand-in
     python run_nitromethane.py --conformer staggered
 """
@@ -20,6 +20,10 @@ from ase.constraints import FixInternals
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import common  # noqa: E402
+
+if getattr(common, "COMMON_VERSION", 0) < 3:
+    raise SystemExit("paper/common.py is outdated. Copy common.py from the same "
+                     "release as this script.")
 
 from overtone import calculate_anharmonics, recompute_vpt2  # noqa: E402
 
@@ -47,15 +51,23 @@ EXPERIMENT = [3080, 3045, 2974, 1583, 1434, 1410, 1397, 1380, 1131, 1096, 918, 6
 # to weak features of the experimental gas-phase spectrum.
 COMBINATIONS = {"v4+v7": 2955, "v4+v8": 2933, "v4+v11": 2471, "2v7": 2768}
 
-C, N, H_PLANE, O = 0, 1, 2, 5  # atom indices in ase.build.molecule("CH3NO2")
-DIHEDRAL = {"staggered": 90.0, "eclipsed": 0.0}  # H-C-N-O of one methyl H
+C, N, H_PLANE = 0, 1, 2  # atom indices in ase.build.molecule("CH3NO2"), oxygens 5 and 6
+# Dihedral H-C-N-O of one methyl H, relative to one of the oxygens.
+# Staggered: one C-H perpendicular to the NO2 plane (the minimum).
+# Eclipsed: one C-H in the NO2 plane (a maximum along the methyl rotation).
+#
+# Known problem: the constrained optimisation of the eclipsed conformer fails
+# after a few steps (SCF not converged, with ORCA and with GFN2-xTB). The
+# cause is not resolved. The paper therefore uses the staggered conformer only.
+DIHEDRAL = {"staggered": (5, 90.0), "eclipsed": (6, 180.0)}
 
 
 def conformer(name):
     """Exact Cs structure. Staggered: one C-H perpendicular to the NO2 plane.
     Eclipsed: one C-H in the NO2 plane."""
     atoms = molecule("CH3NO2")
-    atoms.set_dihedral(H_PLANE, C, N, O, DIHEDRAL[name], mask=[0, 0, 1, 1, 1, 0, 0])
+    o, angle = DIHEDRAL[name]
+    atoms.set_dihedral(H_PLANE, C, N, o, angle, mask=[0, 0, 1, 1, 1, 0, 0])
     return atoms
 
 
@@ -87,7 +99,8 @@ def run(name, args):
         calculate_anharmonics(atoms, setup, out, derivative_source="forces",
                               exclude_below=100, dry_run=True)
         return
-    fix = FixInternals(dihedrals_deg=[[DIHEDRAL[name], [H_PLANE, C, N, O]]])
+    o, angle = DIHEDRAL[name]
+    fix = FixInternals(dihedrals_deg=[[angle, [H_PLANE, C, N, o]]])
     atoms = common.optimise(atoms, setup, constraint=fix, logfile=str(HERE / f"opt_{name}.log"),
                             save=out / "optimised.traj")
 
@@ -140,7 +153,9 @@ def _harm_intensity(t):
 
 def main():
     p = common.parser(__doc__.split("\n")[1])
-    p.add_argument("--conformer", choices=["staggered", "eclipsed", "both"], default="both")
+    p.add_argument("--conformer", choices=["staggered", "eclipsed", "both"], default="staggered",
+                   help="staggered (default, used in the paper). The eclipsed optimisation "
+                        "currently fails, see the comment at DIHEDRAL.")
     args = p.parse_args()
     names = ["staggered", "eclipsed"] if args.conformer == "both" else [args.conformer]
     results = {n: run(n, args) for n in names}

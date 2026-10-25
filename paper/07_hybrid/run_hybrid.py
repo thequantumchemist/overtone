@@ -27,6 +27,10 @@ sys.path.insert(0, str(HERE.parent))
 sys.path.insert(0, str(HERE.parents[1] / "tutorials"))
 import common  # noqa: E402
 
+if getattr(common, "COMMON_VERSION", 0) < 3:
+    raise SystemExit("paper/common.py is outdated. Copy common.py from the same "
+                     "release as this script.")
+
 from overtone import VPT2Result, calculate_anharmonics, estimate_cost  # noqa: E402
 
 EXPERIMENT = {"v2": 1595, "v1": 3657, "v3": 3756, "2v2": 3152, "v1+v2": 5235,

@@ -136,4 +136,112 @@ Notes for the manuscript
   fundamentals by mostly < 3.5 cm^-1, in both directions. Not the cause.
 * Anharmonic intensities of fundamentals: ours are harmonic-level (no second-
   order corrections), Cornaton's include them.
-* Eclipsed conformer: ORCA stopped during the optimisation. To be rerun.
+* Eclipsed conformer: dropped (confirmed by WD). Not discussed in the paper. Its constrained optimisation fails
+  reproducibly (SCF not converged after a few steps, ORCA and GFN2-xTB), cause
+  unresolved (not the dihedral wrap-around, tested). The staggered conformer is
+  the minimum and fully serves the validation. DONE in manuscript and SI.
+
+## 05_active_learning, water (MP2/aug-cc-pVTZ, received from WD). In the manuscript.
+
+| eps (eV) | evaluation | exact calc. | v2 | v1 | v3 | max dev |
+|---|---|---|---|---|---|---|
+| exact | exact | 324 (100 %) | 1577.81 | 3654.24 | 3767.82 | |
+| 0.001 | mixed | 140 (43.2 %) | 1715.73 | 4002.42 | 3010.40 | 757.4 |
+| 0.001 | final | 140 (43.2 %) | 1579.77 | 3646.79 | 3748.03 | 19.8 |
+| 0.0005 | mixed | 238 (73.5 %) | 1947.40 | 4031.48 | 4084.60 | 377.2 |
+| 0.0005 | final | 238 (73.5 %) | 1581.53 | 3655.92 | 3760.85 | 7.0 |
+| 0.00025 | mixed | 315 (97.2 %) | 1599.65 | 3661.29 | 3785.77 | 21.8 |
+| 0.00025 | final | 315 (97.2 %) | 1579.13 | 3656.86 | 3765.41 | 2.6 |
+
+* Energy route (this run) vs force route (01_water) agree within 0.06 cm^-1.
+* 69 forced exact calculations (19 Hessian + train_start 50). Savings vs force
+  route (200 points) at 1 meV: 30 %.
+* Compared with the first draft: errors 3-4 times smaller at the same threshold.
+
+## DONE (inserted after the 08 water results confirmed it): active-learning sentences on larger grids
+
+Active-learning section, water: add one or two sentences that the savings grow
+strongly with larger finite-difference grids, name the values of the first
+calculations, and then state honestly that such grids are not necessary.
+
+Values of the first draft (energy route, seven-point stencil, 740 single points):
+FALCON needed 117, 152 and 375 exact calculations for 1, 0.5 and 0.25 meV,
+i.e. 16, 21 and 51 % of the grid.
+
+Draft (short sentences, no colons or semicolons):
+  The savings grow strongly with the size of the finite-difference grid.
+  With a seven-point stencil (740 single points), FALCON needed only 117, 152
+  and 375 exact calculations for thresholds of 1, 0.5 and 0.25 meV.
+  This corresponds to 16, 21 and 51 % of the grid.
+  Such large grids are not necessary, however.
+  The five-point stencil is already converged (Supporting Information).
+
+Check before inserting: the last sentence refers to the convergence study
+(08_convergence, water MP2). Insert it only once those results confirm it.
+
+
+## 08_convergence, water (MP2/aug-cc-pVTZ, received from WD). In the SI and main text.
+
+Stencil 1 converged: stencil 2 changes all nine bands by <= 0.02 cm^-1.
+Stencil 0: up to 1.0 (fundamentals) and 2.9 cm^-1 (all bands). delta 0.1 / 0.3:
+<= 0.09 cm^-1. Coupling 2 = 3 within 0.03 cm^-1 (phi_123 = 0 by symmetry), same
+cost (200 points each, force route). Production setting reproduces 01_water.
+Formaldehyde still running.
+
+## 08_convergence, formaldehyde (MP2/aug-cc-pVTZ), partial (delta 0.1 and 0.3 still running)
+
+| stencil | coupling | points | mode 1 | mode 2 | mode 3 | mode 4 | mode 5 | mode 6 | Fermi |
+|---|---|---|---|---|---|---|---|---|---|
+| 0 | 2 | 242 | 1179.35 | 1249.56 | 1510.26 | 1722.53 | 2827.44 | 2875.86 | none |
+| 0 | 3 | 242 | 1179.35 | 1245.93 | 1507.55 | 1720.52 | 2825.92 | 2861.81 | (11, 7, 9) |
+| 1 | 2 | 818 | 1179.87 | 1249.96 | 1510.55 | 1722.73 | 2828.22 | 2876.70 | none |
+| 1 | 3 | 818 | 1179.87 | 1246.34 | 1507.86 | 1720.73 | 2826.71 | 2862.47 | (11, 7, 9) |
+| 2 | 2 | 1754 | 1179.85 | 1249.96 | 1510.54 | 1722.76 | 2828.22 | 2876.70 | none |
+| 2 | 3 | 1754 | 1179.85 | 1246.35 | 1507.85 | 1720.76 | 2826.71 | 2862.48 | (11, 7, 9) |
+
+* Coupling 3 finds the type-2 resonance antisym. CH stretch ~ C=O stretch + CH2 rock.
+  Coupling 2 misses it: mode 6 14.2 cm^-1 too high, modes 2-5 off by 1.5-3.6 cm^-1.
+  (GFN2-xTB test: 65 cm^-1, the resonance is stronger there. Replace in the SI note.)
+* Stencil 1 converged (stencil 2: <= 0.03 cm^-1). Stencil 0: up to 0.8 cm^-1.
+* Coupling 3 costs nothing extra with forces (same number of points).
+
+## DONE (formaldehyde complete): coupling recommendation and SI table inserted
+
+1. SI: replace the red formaldehyde note by the complete table (all eight settings)
+   and replace the GFN2-xTB value of 65 cm^-1 by the MP2 result (14.2 cm^-1).
+2. Main text, numerical-derivatives section: add a short recommendation.
+   Draft (short sentences, no colons or semicolons):
+     For formaldehyde, the coupling level matters.
+     Without three-mode constants, OVERTONE misses the Fermi resonance of the
+     antisymmetric CH stretch and places it 14 cm^-1 too high.
+     With analytic forces, all three-mode constants come at no extra cost.
+     We therefore recommend coupling 3 whenever forces are available.
+
+## 05_active_learning, pyridine (GFN2-xTB as exact method) -- OPEN, WD is testing
+
+Energy route, stencil 1, coupling 3 (210,164 points), threshold 5 meV,
+train_start 10, modelsize 250, max_clusters 20.
+
+| evaluation | exact calc. | fraction of grid | fraction of force route | max dev | mean dev |
+|---|---|---|---|---|---|
+| mixed | 3,166 | 1.5 % | 18.4 % | 48,225 cm^-1 | 15,791 cm^-1 |
+| final | 3,166 | 1.5 % | 18.4 % | 6,640 cm^-1 | 1,107 cm^-1 |
+
+Interpretation (not yet in the manuscript):
+* 5 meV = 1.8e-4 Eh. The noise table (8.2 cm^-1 for 1e-7 Eh at delta 0.2,
+  linear in the noise) predicts about 15,000 cm^-1, matching the mixed result.
+* An energy-only GPR with meV accuracy cannot provide fourth derivatives for
+  27 modes. At 1 meV the run was too slow (about 80 % exact), at 5 meV too
+  inaccurate.
+* Possible next step: force-trained model (e.g. AGOX SparseGPR) on the force
+  route (noise amplified as 1/delta^3 instead of 1/delta^4, 3N data points per
+  exact calculation).
+* Benzene: not needed in the current form. Methane: still informative.
+* Open decision: report pyridine as a limitation in the paper?
+
+
+## 08_convergence, formaldehyde, complete (MP2/aug-cc-pVTZ). In the SI and main text.
+
+delta 0.1: max change 0.68 cm^-1, delta 0.3: 0.37 cm^-1 (relative to delta 0.2).
+The smaller step deviates more, as expected from noise amplification.
+Coupling 2: mode 6 14.2 cm^-1 too high, Fermi resonance (11, 7, 9) missed.

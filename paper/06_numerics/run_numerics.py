@@ -28,6 +28,10 @@ sys.path.insert(0, str(HERE.parent))
 warnings.filterwarnings("ignore")
 
 import common  # noqa: E402
+
+if getattr(common, "COMMON_VERSION", 0) < 3:
+    raise SystemExit("paper/common.py is outdated. Copy common.py from the same "
+                     "release as this script.")
 from overtone import CoordinateTransformer, calculate_anharmonics, estimate_cost  # noqa: E402
 from overtone.engines import SerialEngine  # noqa: E402
 from test_harmonics_and_pipeline import (  # noqa: E402

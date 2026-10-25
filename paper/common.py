@@ -11,6 +11,10 @@ The ORCA executables are taken from the environment variables ORCA_COMMAND
 paths of the original calculations as defaults.
 """
 
+# Version of this helper module. The paper scripts check it at start-up, so an
+# outdated copy of common.py gives a clear message instead of a traceback.
+COMMON_VERSION = 3
+
 import argparse
 import csv
 import os
@@ -206,3 +210,12 @@ def water_modes(result):
     f = fundamentals(result)
     order = sorted(f, key=lambda m: f[m].harmonic)
     return {"v2": order[0], "v1": order[1], "v3": order[2]}
+
+
+def require(version, script):
+    """Stop with a clear message if this common.py is older than the script."""
+    if COMMON_VERSION < version:
+        raise SystemExit(
+            f"{script} needs paper/common.py version {version} or newer, found "
+            f"{COMMON_VERSION}. Copy common.py from the same release as the script."
+        )
