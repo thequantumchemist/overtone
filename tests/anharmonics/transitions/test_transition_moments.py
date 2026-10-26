@@ -5,13 +5,16 @@ Two-quanta transition moments vs exact variational ones
 import itertools
 
 import numpy as np
+import pytest
 import scipy.sparse.linalg as spl
 
 from helpers.models import ho_operators
 from overtone.anharmonics.transitions import TransitionCalculator
 
 
-def test_two_quanta_transition_moments_converge_to_exact():
+@pytest.fixture(scope="module")
+def max_error():
+    """max_error(lam): largest relative error of the PT two-quanta moments at scale lam."""
     rng = np.random.default_rng(7)
     n, nmax = 3, 12
     w = np.array([3000.0, 1450.0, 1100.0])
@@ -27,7 +30,7 @@ def test_two_quanta_transition_moments_converge_to_exact():
     Q, N = ho_operators(n, nmax)
     H0 = sum(w[i] * N[i] for i in range(n))
 
-    def max_error(lam):
+    def error(lam):
         T, m2 = lam * T0, lam * mu2
         H = H0 + sum(T[i, j, k] / 6 * (Q[i] @ Q[j] @ Q[k])
                      for i, j, k in itertools.product(range(n), repeat=3))
@@ -55,6 +58,12 @@ def test_two_quanta_transition_moments_converge_to_exact():
             errs.append(np.linalg.norm(Mex - Mpt) / np.linalg.norm(Mex))
         return max(errs)
 
-    e1, e2 = max_error(0.25), max_error(0.125)
-    assert e2 < 0.02
-    assert 3.0 < e1 / e2 < 5.0  # error scales as lambda^2
+    return {lam: error(lam) for lam in (0.25, 0.125)}
+
+
+def test_moments_accurate_for_weak_anharmonicity(max_error):
+    assert max_error[0.125] < 0.02
+
+
+def test_error_scales_quadratically(max_error):
+    assert 3.0 < max_error[0.25] / max_error[0.125] < 5.0

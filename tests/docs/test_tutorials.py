@@ -13,31 +13,29 @@ import sys
 import types
 from pathlib import Path
 
-import matplotlib
+import matplotlib.pyplot as plt
 import pytest
 
 tblite_ase = pytest.importorskip("tblite.ase")
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
 
 TUTORIALS = Path(__file__).parents[2] / "tutorials"
 
 pytestmark = pytest.mark.tutorial
 
 
+def run(script, workdir):
+    with pytest.MonkeyPatch.context() as mp:
+        mp.chdir(workdir)
+        try:
+            runpy.run_path(str(TUTORIALS / script), run_name="__main__")
+        finally:
+            plt.close("all")
+
+
 @pytest.fixture(scope="module")
 def workdir(tmp_path_factory):
     # shared, because tutorial 5 analyses the output of tutorial 1
     return tmp_path_factory.mktemp("tutorials")
-
-
-def run(script, workdir, monkeypatch):
-    monkeypatch.chdir(workdir)
-    try:
-        runpy.run_path(str(TUTORIALS / script), run_name="__main__")
-    finally:
-        plt.close("all")
 
 
 @pytest.fixture
@@ -50,47 +48,65 @@ def xtb_instead_of_pyscf(monkeypatch):
     monkeypatch.setitem(sys.modules, "pyscf_calculator", module)
 
 
-def test_01_quickstart(workdir, monkeypatch):
-    run("01_quickstart.py", workdir, monkeypatch)
-    assert (workdir / "water_quickstart.png").exists()
-    assert (workdir / "water_quickstart" / "anharmonics" / "vpt2_result.json").exists()
+@pytest.fixture(scope="module")
+def quickstart(workdir):
+    run("01_quickstart.py", workdir)
+    return workdir
 
 
-def test_02_step_by_step(workdir, monkeypatch):
-    run("02_step_by_step.py", workdir, monkeypatch)
+@pytest.fixture(scope="module")
+def analysis(quickstart):
+    run("05_analysis.py", quickstart)
+    return quickstart
 
 
-def test_03_water_vs_experiment(workdir, monkeypatch, xtb_instead_of_pyscf):
-    run("03_water_vs_experiment.py", workdir, monkeypatch)
+@pytest.mark.parametrize("output", ["water_quickstart.png",
+                                    "water_quickstart/anharmonics/vpt2_result.json"])
+def test_01_quickstart_writes(quickstart, output):
+    assert (quickstart / output).exists()
+
+
+def test_02_step_by_step(workdir):
+    run("02_step_by_step.py", workdir)
+
+
+def test_03_water_vs_experiment(workdir, xtb_instead_of_pyscf):
+    run("03_water_vs_experiment.py", workdir)
     assert (workdir / "water_vs_experiment.png").exists()
 
 
-def test_04_fermi_resonances(workdir, monkeypatch):
-    run("04_fermi_resonances.py", workdir, monkeypatch)
+def test_04_fermi_resonances(workdir):
+    run("04_fermi_resonances.py", workdir)
     assert (workdir / "formaldehyde_resonance.png").exists()
 
 
-def test_05_analysis(workdir, monkeypatch):
-    if not (workdir / "water_quickstart").exists():
-        run("01_quickstart.py", workdir, monkeypatch)
-    run("05_analysis.py", workdir, monkeypatch)
-    assert (workdir / "water_spectrum.dat").exists()
-    assert (workdir / "water_vs_reference.png").exists()
+@pytest.mark.parametrize("output", ["water_spectrum.dat", "water_vs_reference.png"])
+def test_05_analysis_writes(analysis, output):
+    assert (analysis / output).exists()
 
 
-def test_06_hybrid(workdir, monkeypatch, xtb_instead_of_pyscf):
-    run("06_hybrid.py", workdir, monkeypatch)
+def test_06_hybrid(workdir, xtb_instead_of_pyscf):
+    run("06_hybrid.py", workdir)
 
 
-def test_pyscf_calculator(monkeypatch):
-    """The real PySCF calculator of tutorials 3 and 6 (skipped without PySCF)."""
+@pytest.fixture(scope="module")
+def h2_with_pyscf():
+    """H2 with the real PySCF calculator of tutorials 3 and 6 (skipped without PySCF)."""
     pytest.importorskip("pyscf")
     from ase.build import molecule
 
-    monkeypatch.syspath_prepend(str(TUTORIALS))
-    from pyscf_calculator import PySCFCalculator
+    with pytest.MonkeyPatch.context() as mp:
+        mp.syspath_prepend(str(TUTORIALS))
+        from pyscf_calculator import PySCFCalculator
 
     atoms = molecule("H2")
     atoms.calc = PySCFCalculator(xc="hf", basis="sto-3g")
-    assert atoms.get_forces().shape == (2, 3)
-    assert atoms.get_dipole_moment().shape == (3,)
+    return atoms
+
+
+def test_pyscf_calculator_gives_forces(h2_with_pyscf):
+    assert h2_with_pyscf.get_forces().shape == (2, 3)
+
+
+def test_pyscf_calculator_gives_dipole(h2_with_pyscf):
+    assert h2_with_pyscf.get_dipole_moment().shape == (3,)
