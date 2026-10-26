@@ -40,7 +40,7 @@ plot = []  # kept for compatibility; matplotlib is now core
 cluster = ["shephex"]  # multi-node / queueing system runs
 falcon = ["falcon-md"]  # on-the-fly active learning
 tutorial = ["tblite"]
-test = ["pytest", "tblite"]
+test = ["pytest", "pytest-cov", "tblite"]
 
 [dependency-groups]
 docs = ["zensical"]  # only for building the documentation site
@@ -67,6 +67,13 @@ filterwarnings = [
     # NumPy 2.5 deprecation raised inside ASE itself, not in OVERTONE
     "ignore:Setting the shape on a NumPy array:DeprecationWarning",
 ]
+
+[tool.coverage.run]
+source = ["overtone"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
 
 [tool.ruff]
 line-length = 88
