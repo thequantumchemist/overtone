@@ -13,7 +13,12 @@ import pytest
 from helpers.calculators import QFFCalculator
 from helpers.harmonics import run_harmonics
 from helpers.models import model_force_field
-from overtone import CoordinateTransformer, VPT2Config, VPT2Solver, calculate_anharmonics
+from overtone import (
+    CoordinateTransformer,
+    VPT2Config,
+    VPT2Solver,
+    calculate_anharmonics,
+)
 
 pytestmark = pytest.mark.filterwarnings("ignore::UserWarning")
 

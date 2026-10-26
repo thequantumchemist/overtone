@@ -1729,6 +1729,7 @@ falcon = [
 test = [
     { name = "pytest" },
     { name = "pytest-cov" },
+    { name = "shephex" },
     { name = "tblite" },
 ]
 tutorial = [
@@ -1752,6 +1753,7 @@ requires-dist = [
     { name = "rich" },
     { name = "scipy" },
     { name = "shephex", marker = "extra == 'cluster'" },
+    { name = "shephex", marker = "extra == 'test'" },
     { name = "tblite", marker = "extra == 'test'" },
     { name = "tblite", marker = "extra == 'tutorial'" },
 ]
