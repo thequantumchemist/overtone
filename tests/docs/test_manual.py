@@ -14,7 +14,7 @@ from overtone.anharmonics import transitions
 from overtone.engines import SerialEngine
 from overtone.harmonics.harmonics import is_linear_molecule
 
-MANUAL = (Path(__file__).parents[1] / "docs" / "manual.md").read_text()
+MANUAL = (Path(__file__).parents[2] / "docs" / "manual.md").read_text()
 INTERNAL = {"serialize_array", "serialize_array_field", "serialize_dict", "validate_and_init"}
 
 FUNCTIONS = [
