@@ -245,3 +245,13 @@ Interpretation (not yet in the manuscript):
 delta 0.1: max change 0.68 cm^-1, delta 0.3: 0.37 cm^-1 (relative to delta 0.2).
 The smaller step deviates more, as expected from noise amplification.
 Coupling 2: mode 6 14.2 cm^-1 too high, Fermi resonance (11, 7, 9) missed.
+
+## 02_ethylene (CCSD(T)/cc-pVDZ, received from WD). In the manuscript and SI.
+
+Harmonic within 1 cm^-1, 10 of 12 fundamentals within 0.7 cm^-1 of Martin et al.,
+X_ii within 0.1 cm^-1 except X_10,10 (0.768 vs 3.540, nu2/2nu10 resonance).
+nu11: VPT2 3147.3 (above harmonic 3143.9), DCPT2 3039.9, deperturbed 3000.9
+(Martin 2999.826), GVPT2 2974.5 (Martin 2973.6), mixing 74 % nu11 / 26 % nu2+nu12.
+nu2: 1630.4 = Martin's uncorrected value. With resonance_K1 = 0.001 (recompute_vpt2):
+deperturbed 1626.5 (Martin 1624.85), GVPT2 1615.5 (Martin 1615.5), mixing 65 % nu2 /
+34 % 2nu10. Additional resonances at this threshold: nu2/2nu8, nu1/2nu2.

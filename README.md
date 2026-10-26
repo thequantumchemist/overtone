@@ -1,6 +1,6 @@
 # OVERTONE
 
-![OVERTONE](assets/overtone_banner.png)
+![OVERTONE](https://raw.githubusercontent.com/thequantumchemist/overtone/main/assets/overtone_banner.png)
 
 OVERTONE computes anharmonic vibrational spectra with second-order vibrational
 perturbation theory (VPT2). It works with any calculator of the Atomic
@@ -100,7 +100,7 @@ calculations tightly (e.g. ORCA `VeryTightSCF`). The docstring of
 
 ## Manual
 
-The [manual](docs/manual.md) ([PDF](docs/manual.pdf)) describes the installation
+The [manual](https://github.com/thequantumchemist/overtone/blob/main/docs/manual.md) ([PDF](https://github.com/thequantumchemist/overtone/blob/main/docs/manual.pdf)) describes the installation
 and every function, class and parameter of OVERTONE with its default value.
 
 ## Tutorial
