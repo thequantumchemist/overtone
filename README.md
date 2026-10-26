@@ -38,7 +38,7 @@ Optional extras: `cluster` (shephex), `falcon` (falcon-md), `tutorial` (tblite) 
 ## Installation
 
 ```
-pip install overtone
+pip install overtone-vpt2
 ```
 
 or the latest version from GitHub

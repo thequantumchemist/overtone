@@ -1,7 +1,7 @@
 """
 Tutorial 1: anharmonic IR spectrum of water in one call (GFN2-xTB, seconds).
 
-    pip install "overtone[tutorial]"
+    pip install "overtone-vpt2[tutorial]"
     python 01_quickstart.py
 """
 from ase.build import molecule

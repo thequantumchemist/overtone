@@ -48,7 +48,7 @@ Please install OVERTONE as introduced in the main `README.md`. The tutorials add
 [tblite](https://github.com/tblite/tblite) for GFN2-xTB and, for tutorial 3, [PySCF](https://pyscf.org).
 
 ```bash
-pip install "overtone[tutorial]"
+pip install "overtone-vpt2[tutorial]"
 pip install pyscf
 ```
 

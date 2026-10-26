@@ -21,7 +21,7 @@ from overtone.harmonics import Harmonics, HarmonicsResult
 from overtone.spectrum import broaden_transitions, plot_spectrum
 from overtone.workflow import calculate_anharmonics, estimate_cost, recompute_vpt2
 
-__version__ = importlib.metadata.version("overtone")
+__version__ = importlib.metadata.version("overtone-vpt2")
 
 __all__ = [
     "calculate_anharmonics",

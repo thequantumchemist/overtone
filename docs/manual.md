@@ -47,7 +47,7 @@ calculator that provides energies (and ideally forces and dipole moments).
 ### Installation with pip
 
 ```bash
-pip install overtone
+pip install overtone-vpt2
 ```
 
 or the latest version from GitHub
@@ -66,7 +66,7 @@ pip install git+https://github.com/thequantumchemist/overtone.git
 | `test` | pytest, tblite | running the test suite |
 
 ```bash
-pip install "overtone[tutorial,cluster]"
+pip install "overtone-vpt2[tutorial,cluster]"
 ```
 
 ### Installation for development
@@ -748,7 +748,7 @@ ShephexEngine(executor=None)
 Distributes the single points with [Shephex](https://pypi.org/project/shephex/).
 `executor=None` runs them locally. A `SlurmExecutor` submits them to SLURM.
 Interrupted runs can be resumed, because finished single points are not
-repeated. Requires `pip install "overtone[cluster]"`.
+repeated. Requires `pip install "overtone-vpt2[cluster]"`.
 
 ### `calculate_trajectory`
 
