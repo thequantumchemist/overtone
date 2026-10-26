@@ -188,7 +188,7 @@ def plot_spectrum(
     except ImportError as err:  # pragma: no cover
         raise ImportError(
             "plot_spectrum needs matplotlib: pip install matplotlib "
-            "(or pip install overtone[plot])"
+            "(or pip install overtone-vpt2[plot])"
         ) from err
 
     transitions = result.transitions if hasattr(result, "transitions") else list(result)

@@ -2,7 +2,7 @@
 Tutorial 3: water at B3LYP/def2-TZVP (PySCF) compared with the experimental
 band positions, including the near-IR overtones and combination bands.
 
-    pip install "overtone[tutorial]" pyscf
+    pip install "overtone-vpt2[tutorial]" pyscf
     python 03_water_vs_experiment.py      # about 5 minutes on a laptop
 
 Expect all bands about 1-2 % too low, typical for B3LYP. The largest

@@ -19,7 +19,7 @@ conda create -n overtone-qc python=3.11
 conda activate overtone-qc
 conda install -c conda-forge pyscf
 pip install git+https://github.com/thequantumchemist/ase_quantum_vqe.git
-pip install overtone
+pip install overtone-vpt2
 ```
 
 ## Running

@@ -1421,7 +1421,7 @@ wheels = [
 ]
 
 [[package]]
-name = "overtone"
+name = "overtone-vpt2"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

@@ -9,7 +9,7 @@ convergence error and how strongly the finite differences amplify it.
 ADAPT-VQE is run with the default and with a tight optimizer tolerance.
 
 Requirements (separate environment, see ase_quantum_vqe's README):
-    pip install overtone
+    pip install overtone-vpt2
     pip install git+https://github.com/thequantumchemist/ase_quantum_vqe.git
     (qiskit==1.4.4, qiskit-algorithms==0.3.1, qiskit-nature==0.7.2, ...)
 
