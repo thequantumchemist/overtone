@@ -30,7 +30,7 @@ Basila Bhanu Pattani Ameerjan, Mads-Peter Verner Christiansen and Wilke Dononell
 
 ## Requirements
 
-* Python 3.10 or later
+* Python 3.11 or later
 * NumPy, SciPy, ASE (3.23 or later), pydantic, rich, matplotlib
 
 Optional extras: `cluster` (shephex), `falcon` (falcon-md), `tutorial` (tblite) and `test`.

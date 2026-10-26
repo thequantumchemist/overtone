@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+.pytest_cache/
+
+# Documentation build
+site/
+.cache/
+
+# Output written when running the tutorials from tutorials/
+tutorials/*/
+tutorials/*.png
+tutorials/*.dat
