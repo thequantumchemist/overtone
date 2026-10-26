@@ -9,8 +9,8 @@ OMP_NUM_THREADS=1 uv run --extra test pytest tests/harmonics # one area
 ```
 
 `OMP_NUM_THREADS=1` matters: competing BLAS threads make the suite about ten
-times slower. Tests that need tblite or PySCF are skipped when those are not
-installed (tblite is part of the `test` extra).
+times slower. Tests that need tblite, shephex or PySCF are skipped when those are not
+installed (both tblite and shephex are part of the `test` extra).
 
 Markers:
 
@@ -26,12 +26,16 @@ own directories.
 | Directory | Tests |
 |---|---|
 | `harmonics/` | Hessian projection, symmetrisation, linear molecules, constraints |
-| `anharmonics/vpt2/` | standard and deperturbed VPT2 vs exact variational levels |
+| `anharmonics/vpt2/` | VPT2 methods vs exact variational levels, split X, mode checks, solver errors |
 | `anharmonics/gvpt2/` | GVPT2 with and without Fermi resonances |
 | `anharmonics/transitions/` | term values, transition moments, IR intensities |
 | `anharmonics/coriolis/` | frame invariance of the Coriolis terms |
-| `spectrum/` | broadening and plotting |
-| `workflow/` | `calculate_anharmonics`: restart, cost estimate, recompute, calculator usage |
+| `anharmonics/derivatives/` | derivative solver, dipole derivatives, coordinate transforms |
+| `anharmonics/results/`, `anharmonics/config/` | result and config models: filtering, summaries, equivalence, validation, JSON round trips |
+| `engines/` | `SerialEngine` restart files, `ShephexEngine` with shephex's `LocalExecutor` |
+| `utils/` | finite-difference stencils and derivatives, serialisation |
+| `spectrum/` | broadening, plotting and their options |
+| `workflow/` | `calculate_anharmonics`: restart, dry run, cost estimate, recompute, calculator usage |
 | `integration/` | full pipeline against an exact quartic force field, and GFN2-xTB validation |
 | `docs/` | the manual documents the API; the tutorials run |
 | `helpers/` | shared code, not tests (see below) |
@@ -79,6 +83,11 @@ copies, so a test cannot change the input of another.
 
 Fixtures shared across directories go in `tests/conftest.py`
 (`optimised_emt`, `charged_water`); fixtures used by one file stay in that file.
+
+**Known bugs.** A test for behaviour that is currently broken is marked
+`@pytest.mark.xfail(strict=True, reason="...")` with the correct expectation,
+so the suite stays green and the marker fails loudly (XPASS) once the bug is
+fixed and can be removed.
 
 **Output and warnings.** pytest captures stdout, so tests do not silence it.
 Use `capsys` to check printed output. Silence an expected warning with
