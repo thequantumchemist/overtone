@@ -87,5 +87,20 @@ Use `capsys` to check printed output. Silence an expected warning with
 ## Coverage
 
 ```bash
-OMP_NUM_THREADS=1 uv run --extra test --with pytest-cov pytest --cov=overtone --cov-report=term-missing
+OMP_NUM_THREADS=1 uv run --extra test pytest --cov
 ```
+
+The settings (source package, missing lines, skip fully covered files) are in
+`[tool.coverage.*]` in `pyproject.toml`.
+
+## CI
+
+`.github/workflows/tests.yml` runs the suite with coverage:
+
+- on pull requests and pushes to main: Python 3.11 (the oldest supported)
+  with the locked dependencies;
+- weekly, on manual dispatch and before every release (`publish.yml` only
+  uploads if it passes): Python 3.11, 3.12 and 3.13 with the newest
+  dependencies.
+
+The coverage table appears in the job summary of each run.

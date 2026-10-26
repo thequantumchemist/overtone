@@ -4,6 +4,9 @@
 #   1. Bump the version in a PR: `uv version --bump patch|minor|major`
 #   2. After merging, create a GitHub Release with the tag `v<version>` (e.g. v0.2.0)
 #
+# Nothing is uploaded unless the test suite passes on all supported Pythons
+# with the newest dependencies (tests.yml).
+#
 # Uploads use PyPI trusted publishing (no API token). The trusted publisher on
 # PyPI is configured for this repository, workflow `publish.yml` and
 # environment `pypi`.
@@ -17,8 +20,15 @@ permissions:
   contents: read
 
 jobs:
+  test:
+    name: Test
+    uses: ./.github/workflows/tests.yml
+    with:
+      python-versions: '["3.11", "3.12", "3.13"]'
+
   build:
     name: Build distributions
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0
