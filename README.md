@@ -98,6 +98,16 @@ Finite differences amplify numerical noise of the energies. Converge SCF
 calculations tightly (e.g. ORCA `VeryTightSCF`). The docstring of
 `calculate_anharmonics` describes every parameter.
 
+## Documentation
+
+The [documentation](https://thequantumchemist.github.io/overtone/) contains the
+tutorials and the manual. Build it locally with
+
+```
+uv sync --group docs
+uv run zensical serve
+```
+
 ## Manual
 
 The [manual](https://github.com/thequantumchemist/overtone/blob/main/docs/manual.md) ([PDF](https://github.com/thequantumchemist/overtone/blob/main/docs/manual.pdf)) describes the installation
@@ -107,7 +117,8 @@ and every function, class and parameter of OVERTONE with its default value.
 
 The `tutorials` folder contains six examples, from a one-call workflow with
 GFN2-xTB to Fermi resonances, hybrid schemes and a comparison with the
-experimental near-IR spectrum of water.
+experimental near-IR spectrum of water. They are explained in the
+[documentation](https://thequantumchemist.github.io/overtone/tutorials/).
 The `paper` folder contains all calculations of the publication.
 
 ## License

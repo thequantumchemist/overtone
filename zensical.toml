@@ -1,0 +1,83 @@
+[project]
+site_name = "OVERTONE"
+site_description = "Anharmonic vibrational spectra with VPT2 for any ASE calculator"
+site_author = "Basila Bhanu Pattani Ameerjan, Mads-Peter Verner Christiansen and Wilke Dononelli"
+site_url = "https://thequantumchemist.github.io/overtone/"
+repo_url = "https://github.com/thequantumchemist/overtone"
+repo_name = "thequantumchemist/overtone"
+edit_uri = "edit/main/docs/"
+copyright = "OVERTONE is licensed under the GPL-3.0 License"
+nav = [
+  { "Home" = "index.md" },
+  { "Tutorials" = [
+    "tutorials/index.md",
+    "tutorials/01-quickstart.md",
+    "tutorials/02-step-by-step.md",
+    "tutorials/04-fermi-resonances.md",
+    "tutorials/05-analysis.md",
+  ] },
+  { "Manual" = "manual.md" },
+]
+
+[project.theme]
+language = "en"
+features = [
+  "content.action.edit",
+  "content.code.annotate",
+  "content.code.copy",
+  "content.code.select",
+  "navigation.footer",
+  "navigation.indexes",
+  "navigation.instant",
+  "navigation.path",
+  "navigation.sections",
+  "navigation.tabs",
+  "navigation.top",
+  "navigation.tracking",
+  "search.highlight",
+  "toc.follow",
+]
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme)"
+toggle.icon = "lucide/sun-moon"
+toggle.name = "Switch to light mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to system preference"
+
+# Listing extensions here replaces Zensical's defaults, so all are given.
+[project.markdown_extensions]
+abbr = {}
+admonition = {}
+attr_list = {}
+def_list = {}
+footnotes = {}
+md_in_html = {}
+tables = {}
+toc.permalink = true
+pymdownx.arithmatex.generic = true
+pymdownx.betterem = {}
+pymdownx.details = {}
+pymdownx.highlight.anchor_linenums = true
+pymdownx.highlight.line_spans = "__span"
+pymdownx.highlight.pygments_lang_class = true
+pymdownx.inlinehilite = {}
+pymdownx.magiclink = {}
+pymdownx.superfences = {}
+pymdownx.tabbed.alternate_style = true
+# Code in the tutorial pages is included from the scripts in tutorials/,
+# which run as tests (tests/test_tutorials.py). Paths are relative to the
+# repository root; a missing file or section fails the build.
+pymdownx.snippets.base_path = ["."]
+pymdownx.snippets.check_paths = true
+pymdownx.snippets.dedent_subsections = true

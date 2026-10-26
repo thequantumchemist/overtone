@@ -42,6 +42,9 @@ falcon = ["falcon-md"]  # on-the-fly active learning
 tutorial = ["tblite"]
 test = ["pytest", "tblite"]
 
+[dependency-groups]
+docs = ["zensical"]  # only for building the documentation site
+
 [project.urls]
 Homepage = "https://github.com/thequantumchemist/overtone"
 Repository = "https://github.com/thequantumchemist/overtone"
@@ -54,6 +57,9 @@ source-include = ["tests/**"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "tutorial: runs a script from tutorials/ (about 30 s in total; deselect with -m 'not tutorial')",
+]
 filterwarnings = [
     # NumPy 2.5 deprecation raised inside ASE itself, not in OVERTONE
     "ignore:Setting the shape on a NumPy array:DeprecationWarning",
