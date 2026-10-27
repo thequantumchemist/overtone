@@ -810,6 +810,27 @@ last digits, and then no saved single point would match.
 **Use forces where possible.** `derivative_source="forces"` needs far fewer
 single points. Check the cost first with `dry_run=True`.
 
+**Slow tblite calculations on small molecules.** tblite starts one OpenMP
+thread per CPU core. For a molecule with a few atoms, coordinating the threads
+takes longer than the calculation itself, and a run can be 20 times slower
+than with a single thread. Set the number of threads before starting Python:
+
+```bash
+export OMP_NUM_THREADS=1
+```
+
+or at the top of the script, before tblite is imported:
+
+```python
+import os
+os.environ["OMP_NUM_THREADS"] = "1"
+```
+
+The same applies to other OpenMP-parallel calculators. Larger systems can
+benefit from several threads, so compare the time of a single point. To use
+many cores for small molecules, run several single points in parallel with
+`ShephexEngine` instead, each with one thread.
+
 **Keep the default step.** `anharmonic_delta=0.2` balances numerical noise and
 truncation error. Smaller steps amplify noise, much larger steps distort
 soft modes.
