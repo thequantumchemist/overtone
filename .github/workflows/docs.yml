@@ -25,8 +25,6 @@ jobs:
         run: uv sync --locked --extra test --group docs
       # the docs include their code from tutorials/, so the scripts must run
       - name: Run tutorials and check the manual
-        env:
-          OMP_NUM_THREADS: 1  # competing BLAS threads make the tests ~10x slower
         run: uv run pytest tests/docs
       - name: Build
         run: uv run zensical build --strict --clean
