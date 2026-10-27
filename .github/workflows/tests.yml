@@ -63,8 +63,6 @@ jobs:
           fi
       - name: Test
         id: test
-        env:
-          OMP_NUM_THREADS: 1  # competing BLAS threads make the tests ~10x slower
         run: uv run --no-sync pytest --cov --cov-report=term
       - name: Coverage summary
         if: ${{ !cancelled() && steps.test.outcome != 'skipped' }}
