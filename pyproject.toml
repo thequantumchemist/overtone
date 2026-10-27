@@ -57,7 +57,10 @@ source-include = ["tests/**"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["tests"]  # shared test code: `from helpers.models import ...`
+addopts = ["--import-mode=importlib"]
 markers = [
+    "slow: takes more than a few seconds (deselect with -m 'not slow')",
     "tutorial: runs a script from tutorials/ (about 30 s in total; deselect with -m 'not tutorial')",
 ]
 filterwarnings = [

@@ -21,7 +21,7 @@ tblite_ase = pytest.importorskip("tblite.ase")
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-TUTORIALS = Path(__file__).parents[1] / "tutorials"
+TUTORIALS = Path(__file__).parents[2] / "tutorials"
 
 pytestmark = pytest.mark.tutorial
 
