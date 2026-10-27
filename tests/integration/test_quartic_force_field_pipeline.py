@@ -5,7 +5,7 @@ projection, displacements, unit conversions, energy- and force-based
 derivatives, VPT2) must then reproduce VPT2 evaluated directly from the
 model constants.
 """
-from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -15,12 +15,13 @@ from helpers.harmonics import run_harmonics
 from helpers.models import model_force_field
 from overtone import CoordinateTransformer, VPT2Config, VPT2Solver, calculate_anharmonics
 
+pytestmark = pytest.mark.filterwarnings("ignore::UserWarning")
 
-@pytest.mark.filterwarnings("ignore::UserWarning")
-@pytest.mark.parametrize("name", ["H2O", pytest.param("CH3NO2", marks=pytest.mark.slow)])
-@pytest.mark.parametrize("source", ["energy", "forces"])
-def test_pipeline_reproduces_exact_quartic_force_field(name, source, optimised_emt, tmp_path):
-    ref_atoms = optimised_emt(name)
+
+@pytest.fixture(scope="module", params=["H2O", pytest.param("CH3NO2", marks=pytest.mark.slow)])
+def model(request, optimised_emt):
+    """A QFF calculator for the molecule and VPT2 evaluated directly from its constants."""
+    ref_atoms = optimised_emt(request.param)
     harm = run_harmonics(ref_atoms)
     act = harm.vibrational_modes
     w = harm.freq[act]
@@ -28,16 +29,6 @@ def test_pipeline_reproduces_exact_quartic_force_field(name, source, optimised_e
     tr = CoordinateTransformer(harm.freq, harm.modes, sqm)
     T, U = model_force_field(w)
 
-    def setup():
-        return QFFCalculator(ref_atoms.positions.copy(), tr, w, T, U, act)
-
-    res = calculate_anharmonics(
-        ref_atoms.copy(), setup, Path(tmp_path), derivative_source=source,
-        stencil=1, anharmonic_delta=0.1, coriolis=False,
-        harmonic_delta=0.001,  # noise-free potential: tiny step is fine
-    )
-
-    # exact VPT2 from the model constants
     N = len(harm.freq)
     T_full = np.zeros((N,) * 3)
     U_full = np.zeros((N,) * 4)
@@ -45,10 +36,30 @@ def test_pipeline_reproduces_exact_quartic_force_field(name, source, optimised_e
     U_full[np.ix_(act, act, act, act)] = U
     cfg = VPT2Config(freq=harm.freq, active_modes=act, min_mode_idx=act[0],
                      max_mode_idx=act[-1], len_modes=N, coriolis=False)
-    exact = VPT2Solver(cfg, (T_full, U_full)).calculate()
-    # stencil 1 is exact for a quartic potential; what remains is the
-    # finite-difference error of the Hessian
-    assert np.allclose(res.anharm_freq[act], exact.anharm_freq[act], atol=0.1)
-    e_res = sorted(t.energy for t in res.transitions)
-    e_ex = sorted(t.energy for t in exact.transitions)
+    return SimpleNamespace(
+        atoms=ref_atoms, active=act,
+        setup=lambda: QFFCalculator(ref_atoms.positions.copy(), tr, w, T, U, act),
+        exact=VPT2Solver(cfg, (T_full, U_full)).calculate(),
+    )
+
+
+@pytest.fixture(scope="module", params=["energy", "forces"])
+def pipeline(request, model, tmp_path_factory):
+    return calculate_anharmonics(
+        model.atoms.copy(), model.setup, tmp_path_factory.mktemp("qff"),
+        derivative_source=request.param, stencil=1, anharmonic_delta=0.1, coriolis=False,
+        harmonic_delta=0.001,  # noise-free potential: tiny step is fine
+    )
+
+
+# stencil 1 is exact for a quartic potential; what remains is the
+# finite-difference error of the Hessian
+def test_fundamentals_match_exact(model, pipeline):
+    act = model.active
+    assert np.allclose(pipeline.anharm_freq[act], model.exact.anharm_freq[act], atol=0.1)
+
+
+def test_all_transition_energies_match_exact(model, pipeline):
+    e_res = sorted(t.energy for t in pipeline.transitions)
+    e_ex = sorted(t.energy for t in model.exact.transitions)
     assert np.allclose(e_res, e_ex, atol=0.2)

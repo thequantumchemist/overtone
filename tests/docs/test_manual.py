@@ -16,6 +16,8 @@ from overtone.harmonics.harmonics import is_linear_molecule
 
 MANUAL = (Path(__file__).parents[2] / "docs" / "manual.md").read_text()
 INTERNAL = {"serialize_array", "serialize_array_field", "serialize_dict", "validate_and_init"}
+PYDANTIC_API = {"construct", "copy", "dict", "json", "parse_file", "parse_obj", "parse_raw",
+                "schema", "schema_json", "update_forward_refs", "validate", "from_orm"}
 
 FUNCTIONS = [
     overtone.calculate_anharmonics, overtone.estimate_cost, overtone.recompute_vpt2,
@@ -39,6 +41,11 @@ CLASSES = [overtone.Harmonics, overtone.HarmonicsResult, overtone.AnharmonicDeri
 BLOCKS = [re.sub(r"\s+", " ", b) for b in re.findall(r"```python\n(.*?)```", MANUAL, re.S)]
 
 
+def params(func):
+    return [p for p in inspect.signature(func).parameters.values()
+            if p.name not in ("self", "cls") and p.kind not in (p.VAR_KEYWORD, p.VAR_POSITIONAL)]
+
+
 def signature_block(func):
     """The manual's code block that shows the signature of func."""
     name = func.__name__ if func.__name__ != "__init__" else func.__qualname__.split(".")[0]
@@ -54,35 +61,44 @@ def documented(name):
     return re.search(rf"\b{re.escape(name)}\b", MANUAL) is not None
 
 
-def params(func):
-    return [p for p in inspect.signature(func).parameters.values()
-            if p.name not in ("self", "cls") and p.kind not in (p.VAR_KEYWORD, p.VAR_POSITIONAL)]
+def public_members(cls):
+    for name, member in inspect.getmembers(cls):
+        if name.startswith("_") or name.startswith("model_") or name in INTERNAL | PYDANTIC_API:
+            continue
+        if callable(member) or isinstance(inspect.getattr_static(cls, name), property):
+            yield name
+
+
+PARAMETERS = [pytest.param(f, p, id=f"{f.__qualname__}-{p.name}")
+              for f in FUNCTIONS for p in params(f)]
+DEFAULTS = [pytest.param(f, p, id=f"{f.__qualname__}-{p.name}")
+            for f in FUNCTIONS for p in params(f) if p.default is not inspect.Parameter.empty]
+FIELDS = [pytest.param(name, id=f"{m.__name__}-{name}") for m in MODELS for name in m.model_fields]
+METHODS = [pytest.param(name, id=f"{c.__name__}-{name}") for c in CLASSES
+           for name in public_members(c)]
 
 
 @pytest.mark.parametrize("func", FUNCTIONS, ids=lambda f: f.__qualname__)
-def test_every_parameter_and_default_is_documented(func):
-    block = signature_block(func)
-    for p in params(func):
-        assert documented(p.name), f"{func.__qualname__}: parameter {p.name} missing"
-        if p.default is not inspect.Parameter.empty:
-            text = f"{p.name}={p.default!r}".replace("'", '"')
-            assert text in block, f"{func.__qualname__}: default '{text}' not in its signature block"
+def test_signature_block_exists(func):
+    signature_block(func)
 
 
-@pytest.mark.parametrize("model", MODELS, ids=lambda m: m.__name__)
-def test_every_field_is_documented(model):
-    for name in model.model_fields:
-        assert documented(name), f"{model.__name__}: field {name} missing"
+@pytest.mark.parametrize("func, param", PARAMETERS)
+def test_parameter_is_documented(func, param):
+    assert documented(param.name)
 
 
-@pytest.mark.parametrize("cls", CLASSES, ids=lambda c: c.__name__)
-def test_every_public_method_is_documented(cls):
-    for name, member in inspect.getmembers(cls):
-        if name.startswith("_") or name.startswith("model_") or name in INTERNAL:
-            continue
-        if name in {"construct", "copy", "dict", "json", "parse_file", "parse_obj",
-                    "parse_raw", "schema", "schema_json", "update_forward_refs",
-                    "validate", "from_orm"}:
-            continue  # pydantic API
-        if callable(member) or isinstance(inspect.getattr_static(cls, name), property):
-            assert documented(name), f"{cls.__name__}.{name} missing"
+@pytest.mark.parametrize("func, param", DEFAULTS)
+def test_default_is_in_signature_block(func, param):
+    text = f"{param.name}={param.default!r}".replace("'", '"')
+    assert text in signature_block(func)
+
+
+@pytest.mark.parametrize("name", FIELDS)
+def test_field_is_documented(name):
+    assert documented(name)
+
+
+@pytest.mark.parametrize("name", METHODS)
+def test_public_method_is_documented(name):
+    assert documented(name)

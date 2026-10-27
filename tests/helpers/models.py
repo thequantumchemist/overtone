@@ -37,9 +37,9 @@ def sym4(diag, off, n):
 
 U_MODEL = sym4({0: 180, 1: 40, 2: 25}, {(0, 1): -20, (0, 2): -15, (1, 2): 10}, 3)
 MU1 = np.array([[0.00, 0.00, 0.05], [0.00, 0.00, 0.30], [0.00, 0.12, 0.00]])
+# mu1[i, c] and mu2[i, j, c]: derivatives of dipole component c along modes i (and j)
 MU2 = np.zeros((3, 3, 3))
 MU2[1, 1, 2] = 0.01
-MU2[1, 2, 1] = MU2[2, 1, 1] = 0.0
 
 
 def model_force_field(w, seed=1):

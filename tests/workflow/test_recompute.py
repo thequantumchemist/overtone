@@ -1,19 +1,38 @@
-from pathlib import Path
+"""recompute_vpt2 re-runs the VPT2 step from a saved calculation."""
+from types import SimpleNamespace
 
 import numpy as np
+import pytest
 
 from helpers.calculators import WATER_CHARGES, ChargedEMT
 from overtone import calculate_anharmonics, recompute_vpt2
 
 
-def test_recompute_vpt2_from_saved_run(charged_water, tmp_path):
+@pytest.fixture(scope="module")
+def runs(charged_water, tmp_path_factory):
+    directory = tmp_path_factory.mktemp("saved")
     first = calculate_anharmonics(
-        charged_water.copy(), directory=Path(tmp_path),
+        charged_water.copy(), directory=directory,
         setup_calculator=lambda: ChargedEMT(WATER_CHARGES),
         intensities=True, save_results=True, stencil=0)
-    same = recompute_vpt2(tmp_path, method="standard")
-    dep = recompute_vpt2(tmp_path, method="deperturbed", max_quanta=3)
-    assert np.allclose(first.anharm_freq, same.anharm_freq)
-    assert same.has_intensities
-    assert dep.method == "deperturbed"
-    assert max(t.total_quanta for t in dep.transitions) == 3
+    return SimpleNamespace(
+        first=first,
+        same=recompute_vpt2(directory, method="standard"),
+        deperturbed=recompute_vpt2(directory, method="deperturbed", max_quanta=3),
+    )
+
+
+def test_same_settings_reproduce_frequencies(runs):
+    assert np.allclose(runs.first.anharm_freq, runs.same.anharm_freq)
+
+
+def test_saved_dipoles_give_intensities(runs):
+    assert runs.same.has_intensities
+
+
+def test_method_can_be_changed(runs):
+    assert runs.deperturbed.method == "deperturbed"
+
+
+def test_max_quanta_can_be_changed(runs):
+    assert max(t.total_quanta for t in runs.deperturbed.transitions) == 3

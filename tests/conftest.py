@@ -1,4 +1,5 @@
 import matplotlib
+import matplotlib.pyplot as plt
 import pytest
 from ase.build import molecule
 from ase.calculators.emt import EMT
@@ -6,7 +7,7 @@ from ase.optimize import BFGS
 
 from helpers.calculators import WATER_CHARGES, ChargedEMT
 
-matplotlib.use("Agg")
+matplotlib.use("Agg")  # before pyplot is imported anywhere else
 
 
 @pytest.fixture(scope="session")
@@ -34,3 +35,9 @@ def charged_water():
     atoms.calc = ChargedEMT(WATER_CHARGES)
     BFGS(atoms, logfile=None).run(fmax=1e-6)
     return atoms
+
+
+@pytest.fixture(autouse=True)
+def close_figures():
+    yield
+    plt.close("all")
