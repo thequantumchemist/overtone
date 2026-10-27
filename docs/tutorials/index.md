@@ -27,6 +27,10 @@ The tutorials additionally need [tblite](https://github.com/tblite/tblite) for G
 pip install "overtone-vpt2[tutorial]"
 ```
 
+The tutorial molecules are small, and tblite runs much faster on them with a
+single thread: set `export OMP_NUM_THREADS=1` before running the scripts (see
+[troubleshooting](../manual.md#14-recommendations-and-troubleshooting)).
+
 ## Recommended order
 
 1. Run `01_quickstart.py` to understand the basic OVERTONE workflow.
