@@ -1,0 +1,75 @@
+# Run the test suite.
+#
+# Pull requests and pushes to main: the oldest supported Python only, with the
+# locked dependencies. The package is pure Python, so this mainly guards
+# against using features newer than requires-python.
+#
+# Weekly, on manual dispatch and before every release (called from
+# publish.yml): all supported Pythons with the newest dependencies, as users
+# get them from PyPI.
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:  # no branch filter: stacked PRs into other branches are tested too
+  schedule:
+    - cron: "0 5 * * 1"  # Mondays 05:00 UTC
+  workflow_dispatch:
+    inputs:
+      python-versions:
+        description: JSON list of Python versions
+        type: string
+        default: '["3.11", "3.12", "3.13"]'
+  workflow_call:
+    inputs:
+      python-versions:
+        description: JSON list of Python versions
+        type: string
+        default: '["3.11", "3.12", "3.13"]'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ${{ fromJSON(inputs.python-versions || (github.event_name == 'schedule' && '["3.11", "3.12", "3.13"]') || '["3.11"]') }}
+    # locked dependencies for PRs and main, the newest ones for the matrix runs
+    env:
+      UPGRADE: ${{ (github.event_name == 'pull_request' || github.event_name == 'push') && 'false' || 'true' }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e  # v6.8.0
+        with:
+          python-version: ${{ matrix.python }}
+          enable-cache: ${{ env.UPGRADE == 'false' }}
+      - name: Install
+        run: |
+          if [ "${UPGRADE}" = "true" ]; then
+            uv sync --upgrade --extra test
+          else
+            uv sync --locked --extra test
+          fi
+      - name: Test
+        id: test
+        run: uv run --no-sync pytest --cov --cov-report=term
+      - name: Coverage summary
+        if: ${{ !cancelled() && steps.test.outcome != 'skipped' }}
+        env:
+          PYTHON: ${{ matrix.python }}
+        run: |
+          {
+            echo "### Coverage (Python ${PYTHON})"
+            uv run --no-sync coverage report --format=markdown
+          } >> "${GITHUB_STEP_SUMMARY}"

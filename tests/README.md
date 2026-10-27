@@ -3,13 +3,14 @@
 ## Running
 
 ```bash
-OMP_NUM_THREADS=1 uv run --extra test pytest            # everything, about 1 min
-OMP_NUM_THREADS=1 uv run --extra test pytest -m "not slow"   # a few seconds
-OMP_NUM_THREADS=1 uv run --extra test pytest tests/harmonics # one area
+uv run --extra test pytest                  # everything, about 1 min
+uv run --extra test pytest -m "not slow"    # a few seconds
+uv run --extra test pytest tests/harmonics  # one area
 ```
 
-`OMP_NUM_THREADS=1` matters: competing BLAS threads make the suite about ten
-times slower. Tests that need tblite or PySCF are skipped when those are not
+`conftest.py` sets `OMP_NUM_THREADS=1` unless it is already set: with one
+OpenMP thread per core, tblite is about 20 times slower on the small test
+molecules. Tests that need tblite or PySCF are skipped when those are not
 installed (tblite is part of the `test` extra).
 
 Markers:
@@ -87,5 +88,20 @@ Use `capsys` to check printed output. Silence an expected warning with
 ## Coverage
 
 ```bash
-OMP_NUM_THREADS=1 uv run --extra test --with pytest-cov pytest --cov=overtone --cov-report=term-missing
+uv run --extra test pytest --cov
 ```
+
+The settings (source package, missing lines, skip fully covered files) are in
+`[tool.coverage.*]` in `pyproject.toml`.
+
+## CI
+
+`.github/workflows/tests.yml` runs the suite with coverage:
+
+- on pull requests and pushes to main: Python 3.11 (the oldest supported)
+  with the locked dependencies;
+- weekly, on manual dispatch and before every release (`publish.yml` only
+  uploads if it passes): Python 3.11, 3.12 and 3.13 with the newest
+  dependencies.
+
+The coverage table appears in the job summary of each run.

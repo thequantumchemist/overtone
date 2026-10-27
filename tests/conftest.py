@@ -1,3 +1,5 @@
+import os
+
 import matplotlib
 import matplotlib.pyplot as plt
 import pytest
@@ -8,6 +10,12 @@ from ase.optimize import BFGS
 from helpers.calculators import WATER_CHARGES, ChargedEMT
 
 matplotlib.use("Agg")  # before pyplot is imported anywhere else
+
+# tblite parallelises with OpenMP; for the small molecules in the tests, one
+# thread per core is ~20x slower than one thread. Set before any test loads
+# tblite; an explicit value is respected.
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+
 
 
 @pytest.fixture(scope="session")
