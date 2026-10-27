@@ -41,7 +41,7 @@ plot = []  # kept for compatibility; matplotlib is now core
 cluster = ["shephex"]  # multi-node / queueing system runs
 falcon = ["falcon-md"]  # on-the-fly active learning
 tutorial = ["tblite"]
-test = ["pytest", "pytest-cov", "tblite"]
+test = ["pytest", "pytest-cov", "shephex", "tblite"]
 
 [dependency-groups]
 docs = ["zensical"]  # only for building the documentation site
@@ -78,3 +78,6 @@ skip_covered = true
 
 [tool.ruff]
 line-length = 88
+
+[tool.ruff.lint.isort]
+known-first-party = ["helpers"]  # tests/helpers, on the pytest pythonpath
