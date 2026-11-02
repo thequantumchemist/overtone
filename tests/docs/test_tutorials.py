@@ -6,15 +6,21 @@ docs in sync with the package (skipped if tblite is not installed).
 Tutorials 3 and 6 use PySCF and take minutes; they run with GFN2-xTB in
 place of the PySCF calculator, which checks every OVERTONE call in them.
 
+Tutorial 7 submits to Slurm; it runs against a stand-in queue that holds the
+jobs until the test lets them finish, so each rerun of the script is checked.
+
 Deselect with `pytest -m "not tutorial"`.
 """
 import runpy
 import sys
 import types
+from types import SimpleNamespace
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pytest
+
+from helpers import queue
 
 tblite_ase = pytest.importorskip("tblite.ase")
 
@@ -110,3 +116,29 @@ def test_pyscf_calculator_gives_forces(h2_with_pyscf):
 
 def test_pyscf_calculator_gives_dipole(h2_with_pyscf):
     assert h2_with_pyscf.get_dipole_moment().shape == (3,)
+
+
+@pytest.fixture(scope="module")
+def cluster_runs(tmp_path_factory):
+    """Run tutorial 7 until it finishes; the number of jobs each run left queued."""
+    pytest.importorskip("shephex")
+    workdir = tmp_path_factory.mktemp("cluster")
+    queued = []
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr("shephex.executor.SlurmExecutor", queue.submit_only_executor())
+        for _ in range(5):  # three runs are needed; stop a runaway loop
+            run("07_cluster.py", workdir)
+            finished = sum(queue.finish_submitted(d) for d in
+                           (workdir / "water_cluster").glob("*harmonics"))
+            if not finished:
+                break
+            queued.append(finished)
+    return SimpleNamespace(workdir=workdir, queued=queued)
+
+
+def test_07_cluster_submits_one_stage_per_run(cluster_runs):
+    assert len(cluster_runs.queued) == 2  # harmonic, then anharmonic single points
+
+
+def test_07_cluster_writes_spectrum_after_last_run(cluster_runs):
+    assert (cluster_runs.workdir / "water_cluster.png").exists()

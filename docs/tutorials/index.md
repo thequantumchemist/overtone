@@ -10,6 +10,7 @@ concepts:
 | [2. Step by step](02-step-by-step.md) | Every step of the workflow called by hand, and a comparison of all VPT2 variants | a few seconds |
 | [4. Fermi resonances](04-fermi-resonances.md) | Formaldehyde with a Fermi resonance, comparing all VPT2 variants | a few seconds |
 | [5. Analysis](05-analysis.md) | Reloading, recomputing, exporting and plotting the results of tutorial 1 | seconds |
+| [7. Running on a cluster](07-cluster.md) | The quickstart with every single point submitted to Slurm through shephex, in stages | minutes, depending on the queue |
 
 The scripts are in the
 [`tutorials`](https://github.com/thequantumchemist/overtone/tree/main/tutorials)
@@ -21,7 +22,8 @@ scheme with two levels of theory (`06_hybrid.py`).
 ## Prerequisites
 
 Please install OVERTONE as described on the [home page](../index.md#installation).
-The tutorials additionally need [tblite](https://github.com/tblite/tblite) for GFN2-xTB.
+The tutorials additionally need [tblite](https://github.com/tblite/tblite) for GFN2-xTB,
+and tutorial 7 needs [shephex](https://pypi.org/project/shephex/) (the `cluster` extra).
 
 ```bash
 pip install "overtone-vpt2[tutorial]"
@@ -37,6 +39,7 @@ single thread: set `export OMP_NUM_THREADS=1` before running the scripts (see
 2. Run `02_step_by_step.py` to see what happens inside the workflow and how the VPT2 variants differ.
 3. Run `04_fermi_resonances.py` to see how GVPT2 treats Fermi resonances.
 4. Run `05_analysis.py` to reuse and analyse saved results.
+5. Run `07_cluster.py` on a Slurm cluster to distribute the single points.
 
 All scripts are run as part of the test suite, so the code shown here is the
 code that is tested.
