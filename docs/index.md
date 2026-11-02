@@ -6,14 +6,52 @@ title: Home
 
 ![OVERTONE](assets/overtone_banner.png)
 
-OVERTONE computes anharmonic vibrational spectra with second-order vibrational
+`overtone` computes anharmonic vibrational spectra with second-order vibrational
 perturbation theory (VPT2). It works with any calculator of the Atomic
 Simulation Environment (ASE), from quantum chemistry programs such as ORCA or
 PySCF to machine-learning potentials, on-the-fly active learning with FALCON,
 and variational quantum algorithms on (simulated) quantum computers.
 
-OVERTONE provides fundamentals, overtones and combination bands, IR
+`overtone` provides fundamentals, overtones and combination bands, IR
 intensities on request, and plotted spectra including the near-IR.
+
+<div class="grid cards" markdown>
+
+-   :material-clock-fast:{ .lg .middle } __Set up in 5 minutes__
+
+    ---
+
+    Install `overtone` with [`pip`](https://pypi.org/project/overtone-vpt2/) and get up
+    and running in minutes
+
+    [:octicons-arrow-right-24: Getting started](#)
+
+-   :lucide-gift:{ .lg .middle } __Example__
+
+    ---
+
+    Get started with a quick example
+
+    [:octicons-arrow-right-24: Tutorials](mini_example.md)
+
+-   :octicons-mortar-board-24:{ .lg .middle } __Tutorials__
+
+    ---
+
+    Check out the tutorials to learn more
+
+    [:octicons-arrow-right-24: Tutorials](tutorials/index.md)
+
+-   :lucide-shield-question-mark:{ .lg .middle } __Manual__
+
+    ---
+
+    Consult the manual for more information
+
+    [:octicons-arrow-right-24: Tutorials](manual.md)
+
+
+</div>
 
 ## Features
 
@@ -27,62 +65,6 @@ intensities on request, and plotted spectra including the near-IR.
 * Lorentzian and Gaussian spectra, log scale for the near-IR, experimental reference overlay
 * Hybrid schemes with separate calculators for the Hessian and the anharmonic part
 * Runs on a single node or distributed over a queueing system with Shephex
-
-## Installation
-
-```bash
-pip install overtone-vpt2
-```
-
-or the latest version from GitHub
-
-```bash
-pip install git+https://github.com/thequantumchemist/overtone.git
-```
-
-OVERTONE requires Python 3.11 or later, NumPy, SciPy, ASE (3.23 or later),
-pydantic, rich and matplotlib. Optional extras are `cluster` (shephex),
-`falcon` (falcon-md), `tutorial` (tblite) and `test`. See the
-[manual](manual.md#1-installation) for details and the development install.
-
-## Minimal example
-
-The anharmonic IR spectrum of water with GFN2-xTB, taken from the
-[quickstart tutorial](tutorials/01-quickstart.md):
-
-```python
---8<-- "tutorials/01_quickstart.py:imports"
-
-
---8<-- "tutorials/01_quickstart.py:calculator"
-
-
---8<-- "tutorials/01_quickstart.py:optimise"
-
---8<-- "tutorials/01_quickstart.py:workflow"
---8<-- "tutorials/01_quickstart.py:results"
-```
-
-Use `dry_run=True` to see the number of single points before starting a large
-calculation, and `recompute_vpt2(directory, method=...)` to repeat only the
-VPT2 step of a finished run with another method.
-
-## Important settings
-
-| Parameter | Default | Meaning |
-|---|---|---|
-| `method` | `"gvpt2"` | VPT2 variant (`"standard"`, `"deperturbed"`, `"dcpt2"`, `"gvpt2"`) |
-| `derivative_source` | `"energy"` | differentiate energies or analytic forces (fewer points) |
-| `anharmonic_delta` | `0.2` | step in dimensionless normal coordinates, not in Angstrom |
-| `stencil` | `1` | finite-difference stencil (0 to 3) |
-| `coupling` | `3` | 3 includes all cubic three-mode couplings |
-| `harmonic_delta` | `0.005` | Cartesian step for the Hessian in Angstrom |
-| `intensities` | `False` | compute IR intensities (needs dipoles) |
-| `max_quanta` | `2` | highest total number of quanta in the band list |
-
-Finite differences amplify numerical noise of the energies. Converge SCF
-calculations tightly (e.g. ORCA `VeryTightSCF`). The [manual](manual.md)
-describes every function, class and parameter with its default value.
 
 ## Authors
 
