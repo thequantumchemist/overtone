@@ -17,6 +17,7 @@ from overtone.anharmonics.transitions import TransitionCalculator, VPT2Transitio
 from overtone.anharmonics.vpt2_config import VPT2Config
 from overtone.anharmonics.vpt2_result import VPT2Result
 from overtone.anharmonics.vpt2_solver import VPT2Solver
+from overtone.engines.exceptions import CalculationsFailed, CalculationsPending
 from overtone.harmonics import Harmonics, HarmonicsResult
 from overtone.spectrum import broaden_transitions, plot_spectrum
 from overtone.workflow import calculate_anharmonics, estimate_cost, recompute_vpt2
@@ -27,6 +28,8 @@ __all__ = [
     "calculate_anharmonics",
     "estimate_cost",
     "recompute_vpt2",
+    "CalculationsPending",
+    "CalculationsFailed",
     "Harmonics",
     "HarmonicsResult",
     "AnharmonicDerivativesConfig",
