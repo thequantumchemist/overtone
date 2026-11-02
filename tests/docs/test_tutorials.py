@@ -3,8 +3,9 @@ The tutorial scripts run without errors and write their output files.
 
 The documentation includes its code from these scripts, so this keeps the
 docs in sync with the package (skipped if tblite is not installed).
-Tutorials 3 and 6 use PySCF and take minutes; they run with GFN2-xTB in
-place of the PySCF calculator, which checks every OVERTONE call in them.
+Tutorial 6 also needs PySCF, for B3LYP at the 19 harmonic single points
+(about 20 s). Tutorial 3 runs with GFN2-xTB; its PySCF variant is only
+shown in a comment, and uses the same calculator as tutorial 6.
 
 Tutorial 7 submits to Slurm; it runs against a stand-in queue that holds the
 jobs until the test lets them finish, so each rerun of the script is checked.
@@ -12,8 +13,6 @@ jobs until the test lets them finish, so each rerun of the script is checked.
 Deselect with `pytest -m "not tutorial"`.
 """
 import runpy
-import sys
-import types
 from types import SimpleNamespace
 from pathlib import Path
 
@@ -32,6 +31,7 @@ pytestmark = pytest.mark.tutorial
 def run(script, workdir):
     with pytest.MonkeyPatch.context() as mp:
         mp.chdir(workdir)
+        mp.syspath_prepend(str(TUTORIALS))  # as `python script.py` does
         try:
             runpy.run_path(str(TUTORIALS / script), run_name="__main__")
         finally:
@@ -42,16 +42,6 @@ def run(script, workdir):
 def workdir(tmp_path_factory):
     # shared, because tutorial 5 analyses the output of tutorial 1
     return tmp_path_factory.mktemp("tutorials")
-
-
-@pytest.fixture
-def xtb_instead_of_pyscf(monkeypatch):
-    def fake(**kwargs):
-        return tblite_ase.TBLite(method="GFN2-xTB", verbosity=0, accuracy=0.01)
-
-    module = types.ModuleType("pyscf_calculator")
-    module.PySCFCalculator = fake
-    monkeypatch.setitem(sys.modules, "pyscf_calculator", module)
 
 
 @pytest.fixture(scope="module")
@@ -76,7 +66,7 @@ def test_02_step_by_step(workdir):
     run("02_step_by_step.py", workdir)
 
 
-def test_03_water_vs_experiment(workdir, xtb_instead_of_pyscf):
+def test_03_water_vs_experiment(workdir):
     run("03_water_vs_experiment.py", workdir)
     assert (workdir / "water_vs_experiment.png").exists()
 
@@ -91,7 +81,9 @@ def test_05_analysis_writes(analysis, output):
     assert (analysis / output).exists()
 
 
-def test_06_hybrid(workdir, xtb_instead_of_pyscf):
+@pytest.mark.slow
+def test_06_hybrid(workdir):
+    pytest.importorskip("pyscf")
     run("06_hybrid.py", workdir)
 
 

@@ -40,8 +40,8 @@ dependencies = [
 plot = []  # kept for compatibility; matplotlib is now core
 cluster = ["shephex"]  # multi-node / queueing system runs
 falcon = ["falcon-md"]  # on-the-fly active learning
-tutorial = ["tblite"]
-test = ["pytest", "pytest-cov", "shephex", "tblite"]
+tutorial = ["pyscf", "tblite"]
+test = ["pyscf", "pytest", "pytest-cov", "shephex", "tblite"]
 
 [dependency-groups]
 docs = ["zensical"]  # only for building the documentation site
@@ -62,7 +62,7 @@ pythonpath = ["tests"]  # shared test code: `from helpers.models import ...`
 addopts = ["--import-mode=importlib"]
 markers = [
     "slow: takes more than a few seconds (deselect with -m 'not slow')",
-    "tutorial: runs a script from tutorials/ (about 30 s in total; deselect with -m 'not tutorial')",
+    "tutorial: runs a script from tutorials/ (about 1 min in total; deselect with -m 'not tutorial')",
 ]
 filterwarnings = [
     # NumPy 2.5 deprecation raised inside ASE itself, not in OVERTONE
