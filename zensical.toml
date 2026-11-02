@@ -9,6 +9,8 @@ edit_uri = "edit/main/docs/"
 copyright = "OVERTONE is licensed under the GPL-3.0 License"
 nav = [
   { "Home" = "index.md" },
+  { "Installation" = "install.md" },
+  { "Example" = "mini_example.md" },
   { "Tutorials" = [
     "tutorials/index.md",
     "tutorials/01-quickstart.md",
@@ -77,6 +79,7 @@ pymdownx.highlight.pygments_lang_class = true
 pymdownx.inlinehilite = {}
 pymdownx.magiclink = {}
 pymdownx.superfences = {}
+pymdownx.smartsymbols = {}
 pymdownx.tabbed.alternate_style = true
 # Code in the tutorial pages is included from the scripts in tutorials/,
 # which run as tests (tests/test_tutorials.py). Paths are relative to the
@@ -84,3 +87,5 @@ pymdownx.tabbed.alternate_style = true
 pymdownx.snippets.base_path = ["."]
 pymdownx.snippets.check_paths = true
 pymdownx.snippets.dedent_subsections = true
+pymdownx.emoji.emoji_generator = "zensical.extensions.emoji.to_svg"
+pymdownx.emoji.emoji_index = "zensical.extensions.emoji.twemoji"

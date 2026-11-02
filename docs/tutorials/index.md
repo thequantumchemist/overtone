@@ -20,7 +20,7 @@ folder of the repository.
 
 ## Prerequisites
 
-Please install OVERTONE as described on the [home page](../index.md#installation).
+Please install OVERTONE as described on the [installation page](../install.md).
 The tutorials additionally need [tblite](https://github.com/tblite/tblite) for GFN2-xTB
 and [PySCF](https://pyscf.org) for DFT (tutorial 6, and optionally tutorial 3),
 and tutorial 7 needs [shephex](https://pypi.org/project/shephex/) (the `cluster` extra).
