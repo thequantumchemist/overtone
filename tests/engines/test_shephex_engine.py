@@ -14,8 +14,14 @@ import pytest
 from ase.build import molecule
 from ase.calculators.emt import EMT
 
+from helpers import queue
 from helpers.calculators import WATER_CHARGES, ChargedEMT
-from overtone import calculate_anharmonics, estimate_cost
+from overtone import (
+    CalculationsFailed,
+    CalculationsPending,
+    calculate_anharmonics,
+    estimate_cost,
+)
 from overtone.engines import SerialEngine, ShephexEngine, shephex_engine
 
 pytestmark = pytest.mark.filterwarnings("ignore::UserWarning")
@@ -192,34 +198,130 @@ def test_changed_structures_are_recalculated(local_executor, structures, tmp_pat
     assert np.allclose(result[0].positions, moved[0].positions)
 
 
-@pytest.mark.xfail(strict=True, raises=TypeError, reason=(
-    "output_directory is typed Path | str, but a str fails at "
-    "`output_directory / 'trajectory.traj'`"))
 def test_output_directory_may_be_a_string(local_executor, structures, tmp_path):
     result = ShephexEngine(local_executor()).calculate_trajectory(
         copies(structures), EMT, output_directory=str(tmp_path))
     assert len(result) == N_STRUCTURES
 
 
-class StillWaiting(Exception):
-    pass
+# ------------------------------------------------- failed and pending experiments
+
+FAILING_INDEX = 1
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "a failed experiment never writes calc_<i>.traj and _gather_shephex waits for it forever"))
-def test_failed_calculation_raises_instead_of_waiting(local_executor, structures,
-                                                      tmp_path, monkeypatch):
-    def broken_calculator():
-        raise RuntimeError("calculator setup failed")
+class FailingEMT(EMT):
+    """EMT that fails for one of the structures."""
 
-    def sleep(seconds):  # the gather loop sleeps between polls: stop it there
-        raise StillWaiting
+    def calculate(self, atoms=None, *args, **kwargs):
+        if np.allclose(atoms.positions, FailingEMT.bad_positions):
+            raise RuntimeError("SCF did not converge")
+        super().calculate(atoms, *args, **kwargs)
 
-    monkeypatch.setattr(shephex_engine, "sleep", sleep)
-    with pytest.raises(Exception) as error:
+
+@pytest.fixture
+def failing_emt(structures):
+    FailingEMT.bad_positions = structures[FAILING_INDEX].positions
+    return FailingEMT
+
+
+@pytest.fixture
+def failed_run(local_executor, structures, failing_emt, tmp_path):
+    with pytest.raises(CalculationsFailed) as error:
         ShephexEngine(local_executor()).calculate_trajectory(
-            copies(structures), broken_calculator, output_directory=tmp_path)
-    assert not isinstance(error.value, StillWaiting)
+            copies(structures), failing_emt, output_directory=tmp_path)
+    return SimpleNamespace(error=error.value, directory=tmp_path)
+
+
+def test_failed_calculation_raises(failed_run):
+    assert list(failed_run.error.failed) == [FAILING_INDEX]
+
+
+def test_failed_calculation_reports_the_error(failed_run):
+    assert "SCF did not converge" in str(failed_run.error)
+
+
+def test_failed_calculation_is_not_rerun_by_default(local_executor, structures, failed_run):
+    with pytest.raises(CalculationsFailed):
+        ShephexEngine(local_executor()).calculate_trajectory(
+            copies(structures), EMT, output_directory=failed_run.directory)
+
+
+def test_retry_failed_reruns_with_the_new_calculator(local_executor, structures, failed_run):
+    result = ShephexEngine(local_executor(), retry_failed=True).calculate_trajectory(
+        copies(structures), EMT, output_directory=failed_run.directory)
+    assert np.isclose(result[FAILING_INDEX].get_potential_energy(),
+                      reference(structures[FAILING_INDEX], EMT, "energy"), atol=1e-12)
+
+
+def test_retry_failed_keeps_one_experiment_per_structure(local_executor, structures,
+                                                         failed_run):
+    ShephexEngine(local_executor(), retry_failed=True).calculate_trajectory(
+        copies(structures), EMT, output_directory=failed_run.directory)
+    assert len(experiment_directories(failed_run.directory)) == N_STRUCTURES
+
+
+@pytest.fixture
+def submit_only_executor(local_executor):
+    return queue.submit_only_executor()
+
+
+@pytest.fixture
+def pending_run(submit_only_executor, structures, tmp_path):
+    with pytest.raises(CalculationsPending) as error:
+        ShephexEngine(submit_only_executor()).calculate_trajectory(
+            copies(structures), EMT, output_directory=tmp_path)
+    return SimpleNamespace(error=error.value, directory=tmp_path)
+
+
+def test_unfinished_calculations_raise_pending(pending_run):
+    assert pending_run.error.statuses == {"submitted": N_STRUCTURES}
+
+
+def test_pending_calculations_are_not_resubmitted(submit_only_executor, structures,
+                                                  pending_run):
+    executed = []
+
+    class RecordingExecutor(submit_only_executor):
+        def execute(self, experiments, *args, **kwargs):
+            executed.extend(experiments)
+            return super().execute(experiments, *args, **kwargs)
+
+    with pytest.raises(CalculationsPending):
+        ShephexEngine(RecordingExecutor()).calculate_trajectory(
+            copies(structures), EMT, output_directory=pending_run.directory)
+    assert executed == []
+
+
+def test_rerun_after_jobs_finish_returns_results(local_executor, structures, pending_run):
+    queue.finish_submitted(pending_run.directory)
+    result = ShephexEngine(local_executor()).calculate_trajectory(
+        copies(structures), EMT, output_directory=pending_run.directory)
+    assert np.allclose([a.get_potential_energy() for a in result],
+                       [reference(a, EMT, "energy") for a in structures], atol=1e-12)
+
+
+def test_other_trajectories_in_directory_are_ignored(local_executor, submit_only_executor,
+                                                     structures, tmp_path):
+    with pytest.raises(CalculationsPending):
+        ShephexEngine(submit_only_executor()).calculate_trajectory(
+            copies(structures), EMT, output_directory=tmp_path,
+            trajectory_path=tmp_path / "other.traj")
+    result = ShephexEngine(local_executor()).calculate_trajectory(
+        copies(structures), EMT, output_directory=tmp_path)
+    assert len(result) == N_STRUCTURES
+
+
+@pytest.mark.xfail(strict=False, raises=ValueError, reason=(
+    "shephex bug: Study treats an experiment whose options are a subset of another's "
+    "(energy-only vs compute_dipole=True) as a duplicate, and fails to load the directory "
+    "depending on the order of the (random) experiment directories, so not strict"))
+def test_dipole_run_does_not_reuse_energy_only_results(local_executor, structures, tmp_path):
+    engine = ShephexEngine(local_executor())
+    engine.calculate_trajectory(copies(structures), charged_emt, output_directory=tmp_path)
+    result = engine.calculate_trajectory(copies(structures), charged_emt,
+                                         output_directory=tmp_path,
+                                         properties=("energy", "dipole"))
+    assert all("dipole" in atoms.calc.results for atoms in result)
 
 
 # --------------------------------------------------------------- workflow level
@@ -273,3 +375,22 @@ def test_intensities_match_serial_engine(shephex_intensities, serial_intensities
 def test_workflow_experiments_land_in_stage_directory(shephex_workflow, water, stage):
     expected = estimate_cost(water, stencil=0)[stage]
     assert len(experiment_directories(shephex_workflow.directory / f"{stage}s")) == expected
+
+
+def test_workflow_stops_at_unfinished_stage(submit_only_executor, water, tmp_path):
+    with pytest.raises(CalculationsPending):
+        run(water, tmp_path, EMT, engine=ShephexEngine(submit_only_executor()))
+    assert experiment_directories(tmp_path / "harmonics")
+    assert not experiment_directories(tmp_path / "anharmonics")
+
+
+def test_workflow_continues_on_rerun(local_executor, submit_only_executor, water,
+                                     serial_workflow, tmp_path):
+    with pytest.raises(CalculationsPending):
+        run(water, tmp_path, EMT, engine=ShephexEngine(submit_only_executor()))
+    queue.finish_submitted(tmp_path / "harmonics")
+    with pytest.raises(CalculationsPending):  # the anharmonic stage is submitted now
+        run(water, tmp_path, EMT, engine=ShephexEngine(submit_only_executor()))
+    queue.finish_submitted(tmp_path / "anharmonics")
+    result = run(water, tmp_path, EMT, engine=ShephexEngine(local_executor()))
+    assert np.allclose(result.anharm_freq, serial_workflow.anharm_freq, atol=1e-10)

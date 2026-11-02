@@ -29,6 +29,10 @@ All scripts run as part of the test suite (`tests/test_tutorials.py`).
   Hessian from B3LYP (PySCF), anharmonic part from GFN2-xTB (medium, about 2 minutes).
   Described below.
 
+- `07_cluster.py`
+  The quickstart with every single point submitted to Slurm through shephex; rerun the script until it finishes (needs a Slurm cluster and the `cluster` extra).
+  [Documentation](https://thequantumchemist.github.io/overtone/tutorials/07-cluster/)
+
 - `pyscf_calculator.py`
   A small ASE calculator for PySCF with analytic forces and dipole moments, used by tutorials 3 and 6.
 

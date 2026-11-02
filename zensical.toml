@@ -15,6 +15,7 @@ nav = [
     "tutorials/02-step-by-step.md",
     "tutorials/04-fermi-resonances.md",
     "tutorials/05-analysis.md",
+    "tutorials/07-cluster.md",
   ] },
   { "Manual" = "manual.md" },
 ]
